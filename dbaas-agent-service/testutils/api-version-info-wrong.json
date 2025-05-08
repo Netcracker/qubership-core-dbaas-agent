@@ -1,0 +1,18 @@
+{
+  "specs": [
+    {
+      "specRootUrl": "/api",
+      "minor": 0,
+      "supportedMajors": [
+        3
+      ]
+    },
+    {
+      "specRootUrl": "/api/declarations",
+      "major": 1,
+      "supportedMajors": [
+        1
+      ]
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "specs": [
+    {
+      "specRootUrl": "/api",
+      "major": 3,
+      "minor": 14,
+      "supportedMajors": [
+        3
+      ]
+    },
+    {
+      "specRootUrl": "/api/declarations",
+      "major": 1,
+      "minor": 0,
+      "supportedMajors": [
+        1
+      ]
+    },
+    {
+      "specRootUrl": "/api/composite",
+      "major": 1,
+      "minor": 0,
+      "supportedMajors": [
+        1
+      ]
+    }
+  ]
+}

@@ -1,0 +1,319 @@
+info:
+  contact: {}
+  description: DbaaS Agent is a microservice deployed inside functional project to
+    get access to DbaaS Aggregator service. For more information, visit our Documentation
+    (https://github.com/netcracker/qubership-core-dbaas-agent/blob/main/README.md).
+  title: Dbaas Agent API
+  version: "2.0"
+paths:
+  /api/v3/dbaas/{namespace}/databases:
+    put:
+      description: Get Or Create Database
+      operationId: GetOrCreateDatabaseV3
+      parameters:
+      - description: request body
+        in: body
+        name: request
+        required: true
+        schema:
+          additionalProperties: true
+          type: object
+      - description: namespace
+        in: path
+        name: namespace
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              type: integer
+            type: array
+        "201":
+          description: Created
+          schema:
+            items:
+              type: integer
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Get Or Create Database
+      tags:
+      - API V3
+  /api/v3/dbaas/{namespace}/databases/{type}:
+    delete:
+      description: Deletion By Classifier
+      operationId: DeletionByClassifier
+      parameters:
+      - description: ClassifierWithRolesRequest
+        in: body
+        name: request
+        required: true
+        schema:
+          additionalProperties: true
+          type: object
+      - description: namespace
+        in: path
+        name: namespace
+        required: true
+        type: string
+      - description: type
+        in: path
+        name: type
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              type: integer
+            type: array
+        "201":
+          description: Created
+          schema:
+            items:
+              type: integer
+            type: array
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Deletion By Classifier
+      tags:
+      - API V3
+  /api/v3/dbaas/{namespace}/databases/get-by-classifier/{type}:
+    post:
+      description: Getting Connection By Classifier
+      operationId: GettingConnectionByClassifierV3
+      parameters:
+      - description: ClassifierWithRolesRequest
+        in: body
+        name: request
+        required: true
+        schema:
+          additionalProperties: true
+          type: object
+      - description: namespace
+        in: path
+        name: namespace
+        required: true
+        type: string
+      - description: type
+        in: path
+        name: type
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              type: integer
+            type: array
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Getting Connection By Classifier
+      tags:
+      - API V3
+  /api/v3/dbaas/{namespace}/databases/list:
+    get:
+      description: List of all databases
+      operationId: GettingAllDatabasesByNamespaceV3
+      parameters:
+      - description: namespace
+        in: path
+        name: namespace
+        required: true
+        type: string
+      - description: withResources
+        in: query
+        name: withResources
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              type: integer
+            type: array
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Getting all databases by namespace
+      tags:
+      - API V3
+  /api/v3/dbaas/{namespace}/databases/registration/externally_manageable:
+    put:
+      description: Registration Externally Manageable DB
+      operationId: RegistrationExternallyManageableDBV3
+      parameters:
+      - description: namespace
+        in: path
+        name: namespace
+        required: true
+        type: string
+      - description: ClassifierWithRolesRequest
+        in: body
+        name: request
+        required: true
+        schema:
+          additionalProperties: true
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              type: integer
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "409":
+          description: Conflict
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Registration Externally Manageable DB
+      tags:
+      - API V3
+  /api/v3/dbaas/{type}/physical_databases:
+    get:
+      description: Getting Physical Databases
+      operationId: GettingPhysicalDatabases
+      parameters:
+      - description: type
+        in: path
+        name: type
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              type: integer
+            type: array
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Getting Physical Databases
+      tags:
+      - API V3
+produces:
+- application/json
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
+tags:
+- description: Apis of DB activities related to V3
+  name: API V3

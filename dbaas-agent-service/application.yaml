@@ -1,0 +1,10 @@
+microservice:
+  name: dbaas-agent
+deprecated:
+  api:
+    disabled: false
+    patterns:
+      - /api/v1/**
+      - /api/v2/**
+
+  log.level: info
