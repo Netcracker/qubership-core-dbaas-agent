@@ -2,21 +2,18 @@ package testutils
 
 import (
 	"bytes"
-	cryptoRand "crypto/rand"
+	"crypto/rand"
 	"crypto/rsa"
 	"encoding/base64"
 	"encoding/binary"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"github.com/netcracker/qubership-core-lib-go/v3/logging"
-	"math/rand"
-	"net/http"
-	"time"
-
 	"github.com/golang-jwt/jwt"
 	"github.com/google/uuid"
 	_ "github.com/netcracker/qubership-core-dbaas-agent/dbaas-agent-service/v2/config"
+	"github.com/netcracker/qubership-core-lib-go/v3/logging"
+	"net/http"
 )
 
 const (
@@ -52,7 +49,6 @@ type OidcResponse struct {
 }
 
 func init() {
-	rand.Seed(time.Now().UnixNano())
 	realm = "test-realm"
 	logger = logging.GetLogger("security-test-utils")
 	mainKeyId = generateKid()
@@ -68,7 +64,7 @@ func generateKid() string {
 }
 
 func generatePrivateKey() *rsa.PrivateKey {
-	privateKey, _ := rsa.GenerateKey(cryptoRand.Reader, 2048)
+	privateKey, _ := rsa.GenerateKey(rand.Reader, 2048)
 	return privateKey
 }
 
