@@ -16,6 +16,7 @@ import (
 
 	"github.com/golang-jwt/jwt"
 	"github.com/google/uuid"
+	"github.com/netcracker/qubership-core-lib-go/v3/logging"
 	_ "github.com/netcracker/qubership-core-dbaas-agent/dbaas-agent-service/v2/config"
 )
 
