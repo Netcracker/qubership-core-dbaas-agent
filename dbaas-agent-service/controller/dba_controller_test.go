@@ -1049,7 +1049,7 @@ func (suite *TestSuite) TestController_loadConfigParameter() {
 	confValue := "value"
 	fileName := "fileName"
 	envName := "testConf"
-	err := os.WriteFile(fileName, []byte(confValue), os.ModeAppend)
+	err := os.WriteFile(fileName, []byte(confValue), os.ModePerm)
 	assert.Equal(suite.T(), nil, err)
 
 	parameter := LoadConfigParameter(fileName, envName)

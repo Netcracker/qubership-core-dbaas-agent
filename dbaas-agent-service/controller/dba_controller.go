@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"io/ioutil"
+	"os"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/netcracker/qubership-core-dbaas-agent/dbaas-agent-service/v2/config"
@@ -437,11 +437,11 @@ func (controller *Controller) HandleSimpleGet(ctx *fiber.Ctx) error {
 }
 
 func LoadConfigParameter(file, envName string) string {
-	buf, err := ioutil.ReadFile(file)
+	buf, err := os.ReadFile(file)
 	if err == nil {
 		return string(buf)
 	} else {
-		logger.Debug("Error loading configuration parameter from file", err)
+		logger.Error("Error loading configuration parameter from file", err)
 		return configloader.GetOrDefaultString(envName, "")
 	}
 }
