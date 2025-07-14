@@ -22,8 +22,8 @@ type ServiceNameProvider interface {
 	GetServiceName(userCtx context.Context, classifier interface{}) (string, error)
 }
 
-func (с ClassifierServiceName) GetServiceName(userCtx context.Context, classifier interface{}) (string, error) {
-	logger.Info("Trying to get origine service name fromm classifier")
+func (_ ClassifierServiceName) GetServiceName(_ context.Context, classifier interface{}) (string, error) {
+	logger.Info("Trying to get origin service name fromm classifier")
 	if classifier == nil {
 		return "", errors.New("request must contain a classifier")
 	}
@@ -32,5 +32,4 @@ func (с ClassifierServiceName) GetServiceName(userCtx context.Context, classifi
 		return microserviceNameFromClassifier.(string), nil
 	}
 	return "", errors.New("request must contain microserviceName in a classifier")
-
 }

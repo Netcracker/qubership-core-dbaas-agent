@@ -4,10 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"github.com/netcracker/qubership-core-dbaas-agent/dbaas-agent-service/v2/config"
 	"io/ioutil"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/netcracker/qubership-core-dbaas-agent/dbaas-agent-service/v2/config"
 	_ "github.com/netcracker/qubership-core-dbaas-agent/dbaas-agent-service/v2/domain"
 	"github.com/netcracker/qubership-core-dbaas-agent/dbaas-agent-service/v2/service"
 	"github.com/netcracker/qubership-core-lib-go/v3/configloader"
@@ -107,7 +107,7 @@ func (controller *Controller) HandleGetOrCreateDatabaseV3(c *fiber.Ctx) error {
 	}
 
 	serviceNameProvider := serviceloader.MustLoad[config.ServiceNameProvider]()
-	serviceName, err1 := serviceNameProvider.GetServiceName(userCtx, body["classifier"])
+	serviceName, err1 := config.GetServiceName(userCtx, body["classifier"])
 	if err1 != nil {
 		return respondWithError(userCtx, c, fiber.StatusInternalServerError, err1.Error())
 	}
@@ -198,7 +198,7 @@ func (controller *Controller) HandleGettingConnectionByClassifierV3(c *fiber.Ctx
 	}
 
 	serviceNameProvider := serviceloader.MustLoad[config.ServiceNameProvider]()
-	serviceName, err := serviceNameProvider.GetServiceName(userCtx, body["classifier"])
+	serviceName, err := config.GetServiceName(userCtx, body["classifier"])
 	if err != nil {
 		return respondWithError(userCtx, c, fiber.StatusInternalServerError, err.Error())
 	}
@@ -274,7 +274,7 @@ func (controller *Controller) HandleDeletionByClassifier(c *fiber.Ctx) error {
 	}
 
 	serviceNameProvider := serviceloader.MustLoad[config.ServiceNameProvider]()
-	serviceName, er := serviceNameProvider.GetServiceName(userCtx, body["classifier"])
+	serviceName, er := config.GetServiceName(userCtx, body["classifier"])
 	if er != nil {
 		return respondWithError(userCtx, c, fiber.StatusInternalServerError, er.Error())
 	}
@@ -348,7 +348,7 @@ func (controller *Controller) HandleRegistrationExternallyManageableDBV3(c *fibe
 	}
 
 	serviceNameProvider := serviceloader.MustLoad[config.ServiceNameProvider]()
-	serviceName, erro := serviceNameProvider.GetServiceName(userCtx, body["classifier"])
+	serviceName, erro := config.GetServiceName(userCtx, body["classifier"])
 	if erro != nil {
 		return respondWithError(userCtx, c, fiber.StatusInternalServerError, erro.Error())
 	}
@@ -441,7 +441,7 @@ func LoadConfigParameter(file, envName string) string {
 	if err == nil {
 		return string(buf)
 	} else {
-		logger.Debug("Error loading configuration parameter from file", err)
+		logger.Error("Error loading configuration parameter from file", err)
 		return configloader.GetOrDefaultString(envName, "")
 	}
 }
