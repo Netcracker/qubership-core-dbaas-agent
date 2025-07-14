@@ -14,7 +14,7 @@ metadata:
         app.kubernetes.io/technology: 'go'
         deployment.qubership.org/sessionId: '{{ .Values.DEPLOYMENT_SESSION_ID }}'
     annotations:
-        netcracker.cloud/start.stage: '1'
+        qubership.cloud/start.stage: '1'
 spec:
     replicas: {{ .Values.REPLICAS | default 1 }}
     revisionHistoryLimit: 3

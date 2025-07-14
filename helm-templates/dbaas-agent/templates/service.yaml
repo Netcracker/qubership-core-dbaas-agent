@@ -4,7 +4,7 @@ apiVersion: v1
 metadata:
   name: '{{ .Values.SERVICE_NAME }}'
   annotations:
-    netcracker.cloud/start.stage: '1'
+    qubership.cloud/start.stage: '1'
   labels:
     name: '{{ .Values.SERVICE_NAME }}'
     app.kubernetes.io/name: '{{ .Values.SERVICE_NAME }}'

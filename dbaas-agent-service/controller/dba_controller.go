@@ -4,10 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"github.com/netcracker/qubership-core-dbaas-agent/dbaas-agent-service/v2/config"
 	"os"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/netcracker/qubership-core-dbaas-agent/dbaas-agent-service/v2/config"
 	_ "github.com/netcracker/qubership-core-dbaas-agent/dbaas-agent-service/v2/domain"
 	"github.com/netcracker/qubership-core-dbaas-agent/dbaas-agent-service/v2/service"
 	"github.com/netcracker/qubership-core-lib-go/v3/configloader"
