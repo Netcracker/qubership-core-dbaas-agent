@@ -4,8 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"github.com/netcracker/qubership-core-dbaas-agent/dbaas-agent-service/v2/config"
-	"io/ioutil"
+	"os"
 
 	"github.com/gofiber/fiber/v2"
 	_ "github.com/netcracker/qubership-core-dbaas-agent/dbaas-agent-service/v2/domain"
@@ -437,7 +436,7 @@ func (controller *Controller) HandleSimpleGet(ctx *fiber.Ctx) error {
 }
 
 func LoadConfigParameter(file, envName string) string {
-	buf, err := ioutil.ReadFile(file)
+	buf, err := os.ReadFile(file)
 	if err == nil {
 		return string(buf)
 	} else {
