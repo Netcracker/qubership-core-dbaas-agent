@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"github.com/netcracker/qubership-core-dbaas-agent/dbaas-agent-service/v2/config"
 	"os"
 
 	"github.com/gofiber/fiber/v2"
@@ -106,7 +107,7 @@ func (controller *Controller) HandleGetOrCreateDatabaseV3(c *fiber.Ctx) error {
 	}
 
 	serviceNameProvider := serviceloader.MustLoad[config.ServiceNameProvider]()
-	serviceName, err1 := config.GetServiceName(userCtx, body["classifier"])
+	serviceName, err1 := serviceNameProvider.GetServiceName(userCtx, body["classifier"])
 	if err1 != nil {
 		return respondWithError(userCtx, c, fiber.StatusInternalServerError, err1.Error())
 	}
@@ -197,7 +198,7 @@ func (controller *Controller) HandleGettingConnectionByClassifierV3(c *fiber.Ctx
 	}
 
 	serviceNameProvider := serviceloader.MustLoad[config.ServiceNameProvider]()
-	serviceName, err := config.GetServiceName(userCtx, body["classifier"])
+	serviceName, err := serviceNameProvider.GetServiceName(userCtx, body["classifier"])
 	if err != nil {
 		return respondWithError(userCtx, c, fiber.StatusInternalServerError, err.Error())
 	}
@@ -273,7 +274,7 @@ func (controller *Controller) HandleDeletionByClassifier(c *fiber.Ctx) error {
 	}
 
 	serviceNameProvider := serviceloader.MustLoad[config.ServiceNameProvider]()
-	serviceName, er := config.GetServiceName(userCtx, body["classifier"])
+	serviceName, er := serviceNameProvider.GetServiceName(userCtx, body["classifier"])
 	if er != nil {
 		return respondWithError(userCtx, c, fiber.StatusInternalServerError, er.Error())
 	}
@@ -347,7 +348,7 @@ func (controller *Controller) HandleRegistrationExternallyManageableDBV3(c *fibe
 	}
 
 	serviceNameProvider := serviceloader.MustLoad[config.ServiceNameProvider]()
-	serviceName, erro := config.GetServiceName(userCtx, body["classifier"])
+	serviceName, erro := serviceNameProvider.GetServiceName(userCtx, body["classifier"])
 	if erro != nil {
 		return respondWithError(userCtx, c, fiber.StatusInternalServerError, erro.Error())
 	}
