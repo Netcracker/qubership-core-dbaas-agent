@@ -1,11 +1,12 @@
 # ============== DEPLOYMENT VARIABLES ============================
-INTERNAL_TLS_ENABLED: false
 MONITORING_ENABLED: true
 CLOUD_TOPOLOGY_KEY: kubernetes.io/hostname
 READONLY_CONTAINER_FILE_SYSTEM_ENABLED: false
+IMAGE_REPOSITORY: 'ghcr.io/netcracker/qubership-core-dbaas-agent'
 
 # ============== SERVICE VARIABLES ============================
 LOG_LEVEL: "info"
+SERVICE_NAME: 'dbaas-agent'
 
 TRACING_ENABLED: false
 TRACING_HOST: 'nc-diagnostic-agent'

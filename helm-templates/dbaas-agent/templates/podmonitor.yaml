@@ -15,8 +15,8 @@ metadata:
 spec:
   podMetricsEndpoints:
     - interval: 30s
-      port: {{ if .Values.INTERNAL_TLS_ENABLED }} tls {{ else }} web {{ end }}
-      scheme: {{ if .Values.INTERNAL_TLS_ENABLED }} https {{ else }} http {{ end }}
+      port: web
+      scheme: http
       path: "/prometheus"
   jobLabel: k8s-app
   namespaceSelector:

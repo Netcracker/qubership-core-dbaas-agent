@@ -56,43 +56,22 @@ spec:
         spec:
             serviceAccountName: '{{ .Values.SERVICE_NAME }}'
             volumes:
-            -   name: client-credentials
-                secret:
-                    secretName: '{{ .Values.SERVICE_NAME }}-client-credentials'
-{{ if .Values.INTERNAL_TLS_ENABLED }}
-            -   name: tls
-                secret:
-                    secretName: '{{ .Values.SERVICE_NAME }}-tls'
-{{ end }}
 {{ if and .Values.READONLY_CONTAINER_FILE_SYSTEM_ENABLED (eq .Values.PAAS_PLATFORM "KUBERNETES") }}
             -   name: sslcerts
                 emptyDir: {}
             -   name: cacerts
                 emptyDir: {}
 {{ end }}
-            -   name: '{{ .Values.SSL_SECRET }}'
-                secret:
-                    secretName: '{{ .Values.SSL_SECRET }}'
             containers:
             -   name: '{{ .Values.SERVICE_NAME }}'
                 image: '{{ .Values.IMAGE_REPOSITORY }}:{{ .Values.TAG }}'
                 volumeMounts:
-                -   name: client-credentials
-                    mountPath: /etc/secret
-                    readOnly: true
-{{ if .Values.INTERNAL_TLS_ENABLED }}
-                -   name: tls
-                    mountPath: '/etc/tls'
-                    readOnly: true
-{{ end }}
 {{ if and .Values.READONLY_CONTAINER_FILE_SYSTEM_ENABLED (eq .Values.PAAS_PLATFORM "KUBERNETES") }}
                 -   name: sslcerts
                     mountPath: /etc/ssl/certs
                 -   name: cacerts
                     mountPath: /usr/local/share/ca-certificates
 {{ end }}
-                -   name: '{{ .Values.SSL_SECRET }}'
-                    mountPath: /tmp/cert/{{ .Values.SSL_SECRET }}
                 args:
                 - '/app/dbaas-agent'
                 env:
@@ -100,19 +79,6 @@ spec:
                     value: '{{ .Values.DBAAS_AGENT_NAMESPACE_ISOLATION_ENABLED }}'
                 -   name: LOG_LEVEL
                     value: '{{lower .Values.LOG_LEVEL}}'
-                -   name: CERTIFICATE_BUNDLE_{{ .Values.SSL_SECRET }}_MD5SUM
-                    value: '{{ .Values.CERTIFICATE_BUNDLE_MD5SUM }}'
-                -   name: INTERNAL_TLS_ENABLED
-                    value: '{{ .Values.INTERNAL_TLS_ENABLED }}'
-{{ if .Values.INTERNAL_TLS_ENABLED }}
-                -   name: CERTIFICATE_FILE_PASSWORD
-                    valueFrom:
-                      secretKeyRef:
-                        name: 'tls-password-secret'
-                        key: 'tls-password'
-                -   name: CERTIFICATE_FILE_PATH
-                    value: '/etc/tls'
-{{ end }}
                 -   name: API_DBAAS_ADDRESS
                     value: '{{ .Values.API_DBAAS_ADDRESS }}'
                 -   name: CONSUL_ENABLED
@@ -167,15 +133,15 @@ spec:
                 livenessProbe:
                     httpGet:
                         path: /probes/live
-                        port: {{ if .Values.INTERNAL_TLS_ENABLED }} tls {{ else }} web {{ end }}
-                        scheme: {{ if .Values.INTERNAL_TLS_ENABLED }} HTTPS {{ else }} HTTP {{ end }}
+                        port: web
+                        scheme: HTTP
                     initialDelaySeconds: 180
                     timeoutSeconds: 15
                 readinessProbe:
                     httpGet:
                         path: /probes/ready
-                        port: {{ if .Values.INTERNAL_TLS_ENABLED }} tls {{ else }} web {{ end }}
-                        scheme: {{ if .Values.INTERNAL_TLS_ENABLED }} HTTPS {{ else }} HTTP {{ end }}
+                        port: web
+                        scheme: HTTP
                     initialDelaySeconds: 5
                     timeoutSeconds: 3
                 securityContext:

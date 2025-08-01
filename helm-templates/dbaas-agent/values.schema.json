@@ -162,16 +162,6 @@
       ],
       "internal": true
     },
-    "INTERNAL_TLS_ENABLED": {
-      "$id": "#/properties/INTERNAL_TLS_ENABLED",
-      "$ref": "#/definitions/booleanOrString",
-      "description": "Is TLS enabled",
-      "examples": [
-        false
-      ],
-      "internal": true,
-      "title": "The INTERNAL_TLS_ENABLED schema"
-    },
     "DBAAS_AGENT_NAMESPACE_ISOLATION_ENABLED": {
       "$id": "#/properties/DBAAS_AGENT_NAMESPACE_ISOLATION_ENABLED",
       "$ref": "#/definitions/booleanOrString",
