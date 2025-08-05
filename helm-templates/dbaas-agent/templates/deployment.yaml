@@ -89,6 +89,12 @@ spec:
                     {{ end }}
                 -   name: DBAAS_DEFAULT_SEC_POLICY
                     value: '{{ .Values.DBAAS_DEFAULT_SEC_POLICY }}'
+                -   name: TRACING_ENABLED
+                    value: '{{ .Values.TRACING_ENABLED }}'
+                -   name: TRACING_HOST
+                    value: '{{ .Values.TRACING_HOST }}'
+                -   name: TRACING_SAMPLER_RATELIMITING
+                    value: '{{ .Values.TRACING_SAMPLER_RATELIMITING }}'
                 -   name: CLOUD_NAMESPACE
                     valueFrom:
                         fieldRef:
