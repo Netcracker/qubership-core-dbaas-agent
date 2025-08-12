@@ -22,7 +22,6 @@
       "NAMESPACE": "cloud-core",
       "SERVICE_NAME": "dbaas-agent",
       "REPLICAS": 1,
-      "SSL_SECRET": "defaultsslcertificate",
       "TAG": "",
       "TRACING_ENABLED": false,
       "TRACING_HOST": "nc-diagnostic-agent",
@@ -216,16 +215,6 @@
       "title": "The CPU_LIMIT schema",
       "internal": true,
       "envSpecific": true
-    },
-    "SSL_SECRET": {
-      "$id": "#/properties/SSL_SECRET",
-      "type": "string",
-      "title": "The SSL_SECRET schema",
-      "description": "SSL secret name.",
-      "examples": [
-        "defaultsslcertificate"
-      ],
-      "internal": true
     },
     "TAG": {
       "$id": "#/properties/TAG",
