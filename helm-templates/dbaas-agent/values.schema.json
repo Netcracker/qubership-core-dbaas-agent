@@ -12,7 +12,6 @@
     {
       "PAAS_PLATFORM": "KUBERNETES",
       "API_DBAAS_ADDRESS": "http://dbaas-aggregator.dbaas:8080",
-      "CERTIFICATE_BUNDLE_MD5SUM": "d41d8cd98f00b204e9800998ecf8427e",
       "CPU_REQUEST": "100m",
       "CPU_LIMIT": "500m",
       "DBAAS_AGENT_NAMESPACE_ISOLATION_ENABLED": true,
@@ -149,15 +148,6 @@
       "description": "Hostname Dbaas Server.",
       "examples": [
         "http://dbaas-aggregator.dbaas:8080"
-      ],
-      "internal": true
-    },
-    "CERTIFICATE_BUNDLE_MD5SUM": {
-      "$id": "#/properties/CERTIFICATE_BUNDLE_MD5SUM",
-      "type": "string",
-      "title": "The CERTIFICATE_BUNDLE_MD5SUM schema",
-      "examples": [
-        "d41d8cd98f00b204e9800998ecf8427e"
       ],
       "internal": true
     },
