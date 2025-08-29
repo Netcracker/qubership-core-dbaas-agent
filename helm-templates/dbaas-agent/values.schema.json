@@ -12,7 +12,6 @@
     {
       "PAAS_PLATFORM": "KUBERNETES",
       "API_DBAAS_ADDRESS": "http://dbaas-aggregator.dbaas:8080",
-      "CERTIFICATE_BUNDLE_MD5SUM": "d41d8cd98f00b204e9800998ecf8427e",
       "CPU_REQUEST": "100m",
       "CPU_LIMIT": "500m",
       "DBAAS_AGENT_NAMESPACE_ISOLATION_ENABLED": true,
@@ -22,7 +21,6 @@
       "NAMESPACE": "cloud-core",
       "SERVICE_NAME": "dbaas-agent",
       "REPLICAS": 1,
-      "SSL_SECRET": "defaultsslcertificate",
       "TAG": "",
       "TRACING_ENABLED": false,
       "TRACING_HOST": "nc-diagnostic-agent",
@@ -153,15 +151,6 @@
       ],
       "internal": true
     },
-    "CERTIFICATE_BUNDLE_MD5SUM": {
-      "$id": "#/properties/CERTIFICATE_BUNDLE_MD5SUM",
-      "type": "string",
-      "title": "The CERTIFICATE_BUNDLE_MD5SUM schema",
-      "examples": [
-        "d41d8cd98f00b204e9800998ecf8427e"
-      ],
-      "internal": true
-    },
     "DBAAS_AGENT_NAMESPACE_ISOLATION_ENABLED": {
       "$id": "#/properties/DBAAS_AGENT_NAMESPACE_ISOLATION_ENABLED",
       "$ref": "#/definitions/booleanOrString",
@@ -216,16 +205,6 @@
       "title": "The CPU_LIMIT schema",
       "internal": true,
       "envSpecific": true
-    },
-    "SSL_SECRET": {
-      "$id": "#/properties/SSL_SECRET",
-      "type": "string",
-      "title": "The SSL_SECRET schema",
-      "description": "SSL secret name.",
-      "examples": [
-        "defaultsslcertificate"
-      ],
-      "internal": true
     },
     "TAG": {
       "$id": "#/properties/TAG",
