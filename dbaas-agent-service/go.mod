@@ -13,7 +13,7 @@ require (
 	github.com/netcracker/qubership-core-lib-go/v3 v3.0.0-20250508122204-5cb3c4abfd2b
 	github.com/stretchr/testify v1.10.0
 	github.com/swaggo/swag v1.16.4
-	github.com/urfave/cli/v2 v2.27.6
+	github.com/urfave/cli/v2 v2.27.7
 	github.com/valyala/fasthttp v1.62.0
 	sigs.k8s.io/yaml v1.4.0
 )
