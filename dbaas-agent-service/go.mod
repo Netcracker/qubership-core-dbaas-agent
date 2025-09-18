@@ -8,12 +8,12 @@ require (
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/golang-jwt/jwt/v5 v5.2.2
 	github.com/google/uuid v1.6.0
-	github.com/netcracker/qubership-core-lib-go-actuator-common/v2 v2.0.0-20250505145427-766e76edee70
-	github.com/netcracker/qubership-core-lib-go-fiber-server-utils/v2 v2.0.0-20250505150321-09ac8e0e3ac2
-	github.com/netcracker/qubership-core-lib-go-rest-utils/v2 v2.0.0-20250507111222-22b01ae759f8
+	github.com/netcracker/qubership-core-lib-go-actuator-common/v2 v2.0.2
+	github.com/netcracker/qubership-core-lib-go-fiber-server-utils/v2 v2.0.2
+	github.com/netcracker/qubership-core-lib-go-rest-utils/v2 v2.0.2
 	github.com/netcracker/qubership-core-lib-go/v3 v3.1.0
 	github.com/stretchr/testify v1.11.1
-	github.com/swaggo/swag v1.16.4
+	github.com/swaggo/swag v1.16.6
 	github.com/urfave/cli/v2 v2.27.7
 	github.com/valyala/fasthttp v1.66.0
 	sigs.k8s.io/yaml v1.6.0
@@ -36,7 +36,7 @@ require (
 	github.com/go-openapi/jsonreference v0.21.0 // indirect
 	github.com/go-openapi/spec v0.21.0 // indirect
 	github.com/go-openapi/swag v0.23.1 // indirect
-	github.com/go-viper/mapstructure/v2 v2.2.1 // indirect
+	github.com/go-viper/mapstructure/v2 v2.3.0 // indirect
 	github.com/gofiber/adaptor/v2 v2.2.1 // indirect
 	github.com/hashicorp/consul/api v1.32.1 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
@@ -51,7 +51,7 @@ require (
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/klauspost/compress v1.18.0 // indirect
 	github.com/knadh/koanf v1.5.0 // indirect
-	github.com/knadh/koanf/v2 v2.2.0 // indirect
+	github.com/knadh/koanf/v2 v2.2.2 // indirect
 	github.com/mailru/easyjson v0.9.0 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
@@ -61,7 +61,7 @@ require (
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
-	github.com/netcracker/qubership-core-lib-go-error-handling/v3 v3.0.0-20250403062747-4cb66dc1cc62 // indirect
+	github.com/netcracker/qubership-core-lib-go-error-handling/v3 v3.0.1 // indirect
 	github.com/openzipkin/zipkin-go v0.4.3 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
@@ -84,6 +84,7 @@ require (
 	go.opentelemetry.io/otel/trace v1.35.0 // indirect
 	go.yaml.in/yaml/v2 v2.4.2 // indirect
 	golang.org/x/exp v0.0.0-20250506013437-ce4c2cf36ca6 // indirect
+	golang.org/x/mod v0.24.0 // indirect
 	golang.org/x/sync v0.14.0 // indirect
 	golang.org/x/sys v0.36.0 // indirect
 	golang.org/x/tools v0.33.0 // indirect
