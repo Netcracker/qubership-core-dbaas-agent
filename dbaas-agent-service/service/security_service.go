@@ -6,7 +6,7 @@ import (
 	"log"
 	"strings"
 
-	"github.com/golang-jwt/jwt"
+	jwt "github.com/golang-jwt/jwt/v5"
 	"github.com/netcracker/qubership-core-dbaas-agent/dbaas-agent-service/v2/client"
 	"github.com/netcracker/qubership-core-lib-go/v3/security"
 	"github.com/netcracker/qubership-core-lib-go/v3/serviceloader"
