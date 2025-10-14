@@ -111,6 +111,10 @@ func (srv *SecurityService) CheckTenantId(ctx context.Context, body map[string]i
 	classifier, found := body["classifier"]
 	if found {
 		if tenantFromClassifier, found := classifier.(map[string]interface{})["tenantId"]; found {
+			if tenantFromClassifier == nil || len(tenantFromClassifier.(string)) == 0 {
+				logger.ErrorC(ctx, "Classifier from body contains 'tenantId' field, but it's empty")
+				return errors.New("classifier from body contains 'tenantId' field, but it's empty")
+			}
 			tenantFromBody = tenantFromClassifier.(string)
 		}
 	} else {
