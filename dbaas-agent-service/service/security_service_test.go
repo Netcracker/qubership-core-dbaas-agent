@@ -212,6 +212,17 @@ func (suite *SecServiceTestSuite) TestCheckTenantId_BodyWithBadClassifier() {
 	suite.ErrorContains(err, "tenantIds in classifier and header don't match")
 }
 
+func (suite *SecServiceTestSuite) TestCheckTenantId_BodyWithClassifierWithEmptyTenant() {
+	controlPlaneClient := client.NewControlPlaneClient(nil)
+	tenantManagerClient := client.NewTenantManagerClient(nil)
+	securityService := NewSecurityService("", false, "", controlPlaneClient, tenantManagerClient)
+	body := map[string]interface{}{
+		"classifier": map[string]interface{}{"tenantId": nil},
+	}
+	err := securityService.CheckTenantId(context.Background(), body, "")
+	suite.ErrorContains(err, "classifier from body contains 'tenantId' field, but it's empty")
+}
+
 func (suite *SecServiceTestSuite) TestCheckTenantId_BodyWithBadTenantId() {
 	controlPlaneClient := client.NewControlPlaneClient(nil)
 	tenantManagerClient := client.NewTenantManagerClient(nil)
