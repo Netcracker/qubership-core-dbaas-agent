@@ -4,14 +4,14 @@ go 1.25.4
 
 require (
 	github.com/ghodss/yaml v1.0.0
-	github.com/gofiber/fiber/v2 v2.52.9
+	github.com/gofiber/fiber/v2 v2.52.10
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/golang-jwt/jwt/v5 v5.3.0
 	github.com/google/uuid v1.6.0
-	github.com/netcracker/qubership-core-lib-go-actuator-common/v2 v2.1.0
-	github.com/netcracker/qubership-core-lib-go-fiber-server-utils/v2 v2.1.0
-	github.com/netcracker/qubership-core-lib-go-rest-utils/v2 v2.1.0
-	github.com/netcracker/qubership-core-lib-go/v3 v3.2.0
+	github.com/netcracker/qubership-core-lib-go-actuator-common/v2 v2.1.3
+	github.com/netcracker/qubership-core-lib-go-fiber-server-utils/v2 v2.1.3
+	github.com/netcracker/qubership-core-lib-go-rest-utils/v2 v2.1.3
+	github.com/netcracker/qubership-core-lib-go/v3 v3.2.3
 	github.com/stretchr/testify v1.11.1
 	github.com/swaggo/swag v1.16.6
 	github.com/urfave/cli/v2 v2.27.7
