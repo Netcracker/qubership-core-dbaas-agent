@@ -15,7 +15,7 @@ require (
 	github.com/stretchr/testify v1.11.1
 	github.com/swaggo/swag v1.16.6
 	github.com/urfave/cli/v2 v2.27.7
-	github.com/valyala/fasthttp v1.68.0
+	github.com/valyala/fasthttp v1.69.0
 	sigs.k8s.io/yaml v1.6.0
 )
 
@@ -49,7 +49,7 @@ require (
 	github.com/hashicorp/golang-lru v1.0.2 // indirect
 	github.com/hashicorp/serf v0.10.2 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
-	github.com/klauspost/compress v1.18.1 // indirect
+	github.com/klauspost/compress v1.18.2 // indirect
 	github.com/knadh/koanf v1.5.0 // indirect
 	github.com/knadh/koanf/v2 v2.3.0 // indirect
 	github.com/mailru/easyjson v0.9.0 // indirect
