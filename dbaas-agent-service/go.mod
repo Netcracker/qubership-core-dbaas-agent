@@ -1,6 +1,6 @@
 module github.com/netcracker/qubership-core-dbaas-agent/dbaas-agent-service/v2
 
-go 1.25.5
+go 1.25.6
 
 require (
 	github.com/ghodss/yaml v1.0.0
