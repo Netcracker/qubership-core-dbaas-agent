@@ -45,7 +45,7 @@ func (controller *Controller) GetTokenFromRequest(ctx context.Context, c *fiber.
 		errmsg = fasthttp.StatusMessage(fasthttp.StatusUnauthorized)
 	}
 	if errmsg != "" {
-		logger.ErrorC(ctx, errmsg)
+		logger.ErrorC(ctx, "%s", errmsg)
 		c.Set("WWW-Authenticate", "Basic realm=Restricted")
 		return nil, ErrUnauthorized
 	}

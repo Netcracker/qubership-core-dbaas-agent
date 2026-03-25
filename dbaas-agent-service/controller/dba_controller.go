@@ -441,7 +441,7 @@ func LoadConfigParameter(file, envName string) string {
 	if err == nil {
 		return string(buf)
 	} else {
-		logger.Error("Error loading configuration parameter from file", err)
+		logger.Error("Error loading configuration parameter from file %v", err)
 		return configloader.GetOrDefaultString(envName, "")
 	}
 }

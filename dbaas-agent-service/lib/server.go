@@ -110,7 +110,7 @@ func RunServer() {
 		WithLogLevelsInfo().
 		Process()
 	if err != nil {
-		logger.Error("Error while create app because: " + err.Error())
+		logger.Error("Error while create app because: %s", err.Error())
 		return
 	}
 
