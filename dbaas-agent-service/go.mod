@@ -1,6 +1,6 @@
 module github.com/netcracker/qubership-core-dbaas-agent/dbaas-agent-service/v2
 
-go 1.25.7
+go 1.26.1
 
 require (
 	github.com/ghodss/yaml v1.0.0
@@ -11,7 +11,7 @@ require (
 	github.com/netcracker/qubership-core-lib-go-actuator-common/v2 v2.5.0
 	github.com/netcracker/qubership-core-lib-go-fiber-server-utils/v2 v2.5.0
 	github.com/netcracker/qubership-core-lib-go-rest-utils/v2 v2.4.0
-	github.com/netcracker/qubership-core-lib-go/v3 v3.6.0
+	github.com/netcracker/qubership-core-lib-go/v3 v3.7.2
 	github.com/stretchr/testify v1.11.1
 	github.com/swaggo/swag v1.16.6
 	github.com/urfave/cli/v2 v2.27.7
@@ -52,7 +52,7 @@ require (
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/klauspost/compress v1.18.2 // indirect
 	github.com/knadh/koanf v1.5.0 // indirect
-	github.com/knadh/koanf/v2 v2.3.2 // indirect
+	github.com/knadh/koanf/v2 v2.3.4 // indirect
 	github.com/mailru/easyjson v0.9.0 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
