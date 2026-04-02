@@ -10,7 +10,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 	"github.com/netcracker/qubership-core-dbaas-agent/dbaas-agent-service/v2/client"
 	_ "github.com/netcracker/qubership-core-dbaas-agent/dbaas-agent-service/v2/config"
 	"github.com/netcracker/qubership-core-dbaas-agent/dbaas-agent-service/v2/service"
