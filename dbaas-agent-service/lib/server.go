@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 	"github.com/netcracker/qubership-core-dbaas-agent/dbaas-agent-service/v2/client"
 	"github.com/netcracker/qubership-core-dbaas-agent/dbaas-agent-service/v2/controller"
 	"github.com/netcracker/qubership-core-dbaas-agent/dbaas-agent-service/v2/docs"
