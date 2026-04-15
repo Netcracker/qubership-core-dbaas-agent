@@ -22,4 +22,4 @@ CONSUL_URL: ''
 
 ISTIO_PRIVATE_GATEWAY_NAME: 'private-gateway'
 INTERNAL_SERVICE_NAME: "internal-gateway-service"
-SERVICE_MESH_TYPE: 'CORE' # Options: CORE, ISTIO
+SERVICE_MESH_TYPE: 'Core' # Options: Core, Istio
