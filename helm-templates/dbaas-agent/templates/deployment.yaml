@@ -116,6 +116,8 @@ spec:
                             key: password
                 -   name: DEPRECATED_API_DISABLED
                     value: '{{ .Values.DISABLE_DEPRECATED_API }}'
+                -   name: SERVICE_MESH_TYPE
+                    value: '{{ .Values.SERVICE_MESH_TYPE }}'
                 ports:
                 -   name: web
                     containerPort: 8080
