@@ -10,7 +10,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/netcracker/qubership-core-lib-go-actuator-common/v2 v2.6.1
 	github.com/netcracker/qubership-core-lib-go-fiber-server-utils/v2 v2.5.6
-	github.com/netcracker/qubership-core-lib-go-rest-utils/v2 v2.5.1-0.20260429000146-ce62ea54ec8d
+	github.com/netcracker/qubership-core-lib-go-rest-utils/v2 v2.5.1
 	github.com/netcracker/qubership-core-lib-go/v3 v3.8.2-0.20260428233515-5795851eb5ed
 	github.com/stretchr/testify v1.11.1
 	github.com/swaggo/swag v1.16.6
@@ -37,7 +37,6 @@ require (
 	github.com/go-openapi/jsonreference v0.21.0 // indirect
 	github.com/go-openapi/spec v0.21.0 // indirect
 	github.com/go-openapi/swag v0.23.1 // indirect
-	github.com/go-pkgz/expirable-cache/v3 v3.1.0 // indirect
 	github.com/go-viper/mapstructure/v2 v2.4.0 // indirect
 	github.com/gofiber/adaptor/v2 v2.2.1 // indirect
 	github.com/hashicorp/consul/api v1.34.2 // indirect
