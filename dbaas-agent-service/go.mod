@@ -8,9 +8,9 @@ require (
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/google/uuid v1.6.0
-	github.com/netcracker/qubership-core-lib-go-actuator-common/v2 v2.6.3
-	github.com/netcracker/qubership-core-lib-go-fiber-server-utils/v2 v2.5.8
-	github.com/netcracker/qubership-core-lib-go-rest-utils/v2 v2.5.3
+	github.com/netcracker/qubership-core-lib-go-actuator-common/v2 v2.6.4
+	github.com/netcracker/qubership-core-lib-go-fiber-server-utils/v2 v2.5.9
+	github.com/netcracker/qubership-core-lib-go-rest-utils/v2 v2.5.4
 	github.com/netcracker/qubership-core-lib-go/v3 v3.10.0
 	github.com/stretchr/testify v1.11.1
 	github.com/swaggo/swag v1.16.6
