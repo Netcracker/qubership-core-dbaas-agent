@@ -1,4 +1,4 @@
-package controller
+﻿package controller
 
 import (
 	"bytes"
@@ -84,6 +84,7 @@ func (suite *TestSuite) TestController_HandleGettingConnectionByClassifierV3() {
 	app.Post("/get-by-classifier", suite.controller.HandleGettingConnectionByClassifierV3)
 	jsonStr := testRespBody
 	req, _ := http.NewRequest(http.MethodPost, "/get-by-classifier", bytes.NewBuffer(jsonStr))
+	req.Host = "localhost"
 	req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
 	req.Header.Set(AuthorizationContextName, testutils.AuthHeaderValue(testToken))
 
@@ -110,6 +111,7 @@ func (suite *TestSuite) TestController_ErrorReadBody_HandleGettingConnectionByCl
 	app.Post("/get-by-classifier", suite.controller.HandleGettingConnectionByClassifierV3)
 	jsonStr := testRespBody
 	req, _ := http.NewRequest(http.MethodPost, "/get-by-classifier", bytes.NewBuffer(jsonStr))
+	req.Host = "localhost"
 
 	time.Sleep(5 * time.Second)
 	response, err := app.Test(req, -1)
@@ -132,6 +134,7 @@ func (suite *TestSuite) TestController_HandleDeletionByClassifierV3() {
 	app.Delete("/databases", suite.controller.HandleDeletionByClassifier)
 	jsonStr := testRespBody
 	req, _ := http.NewRequest(http.MethodDelete, "/databases", bytes.NewBuffer(jsonStr))
+	req.Host = "localhost"
 	req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
 	req.Header.Set(AuthorizationContextName, testutils.AuthHeaderValue(testToken))
 
@@ -151,6 +154,7 @@ func (suite *TestSuite) TestController_HandleDeletionByClassifierV3_WrongBodyCon
 
 	badBody := []byte("bad_body_non_xml_content")
 	req, _ := http.NewRequest(http.MethodDelete, "/databases", bytes.NewBuffer(badBody))
+	req.Host = "localhost"
 	req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationXML)
 
 	response, err := app.Test(req, -1)
@@ -182,6 +186,7 @@ func (suite *TestSuite) TestController_HandleDeletionByClassifierV3_NoOwner() {
 	})
 
 	req, _ := http.NewRequest(http.MethodDelete, "/databases", bytes.NewBuffer(body))
+	req.Host = "localhost"
 	req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
 	req.Header.Set(AuthorizationContextName, testutils.AuthHeaderValue(testToken))
 
@@ -204,6 +209,7 @@ func (suite *TestSuite) TestController_HandleDeletionByClassifierV3_ForwardingEr
 
 	testToken := testutils.GetSignedTokenWithClaims("test", nil, map[string]interface{}{"owner": "test-service"})
 	req, _ := http.NewRequest(http.MethodDelete, "/databases", bytes.NewBuffer(body))
+	req.Host = "localhost"
 	req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
 	req.Header.Set(AuthorizationContextName, testutils.AuthHeaderValue(testToken))
 
@@ -235,6 +241,7 @@ func (suite *TestSuite) TestController_HandleDeletionByClassifierV3_NamespaceErr
 	body, _ := json.Marshal(map[string]interface{}{"classifier": map[string]interface{}{"namespace": "test-namespace", "microserviceName": "test-service"}})
 	testToken := testutils.GetSignedTokenWithClaims("test", nil, map[string]interface{}{"owner": "test-service"})
 	req, _ := http.NewRequest(http.MethodDelete, "/databases", bytes.NewBuffer(body))
+	req.Host = "localhost"
 	req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
 	req.Header.Set(AuthorizationContextName, testutils.AuthHeaderValue(testToken))
 
@@ -267,6 +274,7 @@ func (suite *TestSuite) TestController_HandleGetOrCreateDatabaseV3() {
 	app.Put("/databases", suite.controller.HandleGetOrCreateDatabaseV3)
 	jsonStr := testRespBody
 	req, _ := http.NewRequest(http.MethodPut, "/databases", bytes.NewBuffer(jsonStr))
+	req.Host = "localhost"
 	req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
 	req.Header.Set(AuthorizationContextName, testutils.AuthHeaderValue(testToken))
 
@@ -294,6 +302,7 @@ func (suite *TestSuite) TestController_HandleRegistrationExternallyManageableDBV
 	app.Put("/registration/externally_manageable", suite.controller.HandleRegistrationExternallyManageableDBV3)
 	jsonStr := testRespBody
 	req, _ := http.NewRequest(http.MethodPut, "/registration/externally_manageable", bytes.NewBuffer(jsonStr))
+	req.Host = "localhost"
 	req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
 	req.Header.Set(AuthorizationContextName, testutils.AuthHeaderValue(testToken))
 
@@ -325,6 +334,7 @@ func (suite *TestSuite) TestController_ErrorTenant_HandleRegistrationExternallyM
 	app.Put("/registration/externally_manageable", suite.controller.HandleRegistrationExternallyManageableDBV3)
 	jsonStr := testRespBody
 	req, _ := http.NewRequest(http.MethodPut, "/registration/externally_manageable", bytes.NewBuffer(jsonStr))
+	req.Host = "localhost"
 	req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
 	req.Header.Set(AuthorizationContextName, testutils.AuthHeaderValue(testToken))
 
@@ -342,6 +352,7 @@ func (suite *TestSuite) TestController_HandleRegistrationExternallyManageableDBV
 	badBody := []byte("bad_body_non_xml_content")
 	testToken := testutils.GetSignedTokenWithClaims("test", []string{"ROLE_TEST_ROLE"}, map[string]interface{}{"owner": "test-service"})
 	req, _ := http.NewRequest(http.MethodPut, "/registration/externally_manageable", bytes.NewBuffer(badBody))
+	req.Host = "localhost"
 	req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationXML)
 	req.Header.Set(AuthorizationContextName, testutils.AuthHeaderValue(testToken))
 
@@ -364,6 +375,7 @@ func (suite *TestSuite) TestController_HandleRegistrationExternallyManageableDBV
 
 	body, _ := json.Marshal(map[string]interface{}{"classifier": map[string]interface{}{"microserviceName": "test-service"}})
 	req, _ := http.NewRequest(http.MethodPut, "/registration/externally_manageable", bytes.NewBuffer(body))
+	req.Host = "localhost"
 	req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
 
 	response, err := app.Test(req, -1)
@@ -392,6 +404,7 @@ func (suite *TestSuite) TestController_HandleRegistrationExternallyManageableDBV
 	})
 
 	req, _ := http.NewRequest(http.MethodPut, "/registration/externally_manageable", bytes.NewBuffer(body))
+	req.Host = "localhost"
 	req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
 	req.Header.Set(AuthorizationContextName, testutils.AuthHeaderValue(testToken))
 
@@ -413,6 +426,7 @@ func (suite *TestSuite) TestController_HandleRegistrationExternallyManageableDBV
 	body, _ := json.Marshal(map[string]interface{}{"classifier": map[string]interface{}{"namespace": "test-namespace", "microserviceName": "test-service"}})
 	testToken := testutils.GetSignedTokenWithClaims("test", nil, map[string]interface{}{"owner": "test-service"})
 	req, _ := http.NewRequest(http.MethodPut, "/registration/externally_manageable", bytes.NewBuffer(body))
+	req.Host = "localhost"
 	req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
 	req.Header.Set(AuthorizationContextName, testutils.AuthHeaderValue(testToken))
 
@@ -439,6 +453,7 @@ func (suite *TestSuite) TestController_HandleRegistrationExternallyManageableDBV
 	body, _ := json.Marshal(map[string]interface{}{"classifier": map[string]interface{}{"namespace": "test-namespace", "microserviceName": "test-service"}})
 	testToken := testutils.GetSignedTokenWithClaims("test", nil, map[string]interface{}{"owner": "test-service"})
 	req, _ := http.NewRequest(http.MethodPut, "/registration/externally_manageable", bytes.NewBuffer(body))
+	req.Host = "localhost"
 	req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
 	req.Header.Set(AuthorizationContextName, testutils.AuthHeaderValue(testToken))
 
@@ -469,6 +484,7 @@ func (suite *TestSuite) TestController_HandleRegistrationExternallyManageableDBV
 
 	body, _ := json.Marshal(map[string]interface{}{"classifier": map[string]interface{}{"namespace": "test-namespace", "microserviceName": "test-service"}})
 	req, _ := http.NewRequest(http.MethodPut, "/registration/externally_manageable", bytes.NewBuffer(body))
+	req.Host = "localhost"
 	req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
 
 	response, err := app.Test(req, -1)
@@ -522,6 +538,7 @@ func (suite *TestSuite) TestController_HandleGetApiVersion() {
 		Process()
 	assert.Nil(suite.T(), err)
 	req, _ := http.NewRequest(http.MethodGet, "/api-version", nil)
+	req.Host = "localhost"
 
 	time.Sleep(5 * time.Second)
 	response, err := app.Test(req, -1)
@@ -545,6 +562,7 @@ func (suite *TestSuite) TestController_HandleGetApiVersion_ForwardingError() {
 	testutils.AddHandler(testutils.Contains("/api-version"), nil)
 
 	req, _ := http.NewRequest(http.MethodGet, "/api-version", nil)
+	req.Host = "localhost"
 
 	response, err := app.Test(req, -1)
 	assert.Nil(suite.T(), err)
@@ -567,6 +585,7 @@ func (suite *TestSuite) TestController_HandleGetAllDatabasesByNamespace() {
 	app.Get("/list", suite.controller.HandleGettingAllDatabasesByNamespaceV3)
 
 	req, _ := http.NewRequest(http.MethodGet, "/list", nil)
+	req.Host = "localhost"
 	req.Header.Set(AuthorizationContextName, testutils.AuthHeaderValue(testToken))
 
 	time.Sleep(5 * time.Second)
@@ -586,6 +605,7 @@ func (suite *TestSuite) TestController_HandleGetAllDatabasesByNamespaceV3_Forwar
 	testutils.AddHandler(testutils.Contains("/list"), nil)
 
 	req, _ := http.NewRequest(http.MethodGet, "/list", nil)
+	req.Host = "localhost"
 
 	response, err := app.Test(req, -1)
 	assert.Nil(suite.T(), err)
@@ -613,6 +633,7 @@ func (suite *TestSuite) TestController_HandleGetAllDatabasesByNamespaceV3_Namesp
 	app.Get("/list", controller.HandleGettingAllDatabasesByNamespaceV3)
 
 	req, _ := http.NewRequest(http.MethodGet, "/list", nil)
+	req.Host = "localhost"
 
 	response, err := app.Test(req, -1)
 	assert.Nil(suite.T(), err)
@@ -642,6 +663,7 @@ func (suite *TestSuite) TestController_RequestMustContainClassifier() {
 	assert.Nil(suite.T(), err)
 	app.Put("/databases", suite.controller.HandleGetOrCreateDatabaseV3)
 	req, _ := http.NewRequest(http.MethodPut, "/databases", bytes.NewBuffer(testRespBody))
+	req.Host = "localhost"
 	req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
 	req.Header.Set(AuthorizationContextName, testutils.AuthHeaderValue(testToken))
 
@@ -672,6 +694,7 @@ func (suite *TestSuite) TestController_RequestMustContainNamespaceInClassifier()
 	assert.Nil(suite.T(), err)
 	app.Put("/databases", suite.controller.HandleGetOrCreateDatabaseV3)
 	req, _ := http.NewRequest(http.MethodPut, "/databases", bytes.NewBuffer(testRespBody))
+	req.Host = "localhost"
 	req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
 	req.Header.Set(AuthorizationContextName, testutils.AuthHeaderValue(testToken))
 
@@ -723,6 +746,7 @@ func (suite *TestSuite) TestController_HandleGetOrCreateDatabaseV3_EmptyBody() {
 	app.Put("/databases", suite.controller.HandleGetOrCreateDatabaseV3)
 
 	req, _ := http.NewRequest(http.MethodPut, "/databases", nil)
+	req.Host = "localhost"
 
 	response, err := app.Test(req, -1)
 	assert.Nil(suite.T(), err)
@@ -743,6 +767,7 @@ func (suite *TestSuite) TestController_HandleGetOrCreateDatabaseV3_WrongBodyCont
 
 	badBody := []byte("bad_body_non_xml_content")
 	req, _ := http.NewRequest(http.MethodPut, "/databases", bytes.NewBuffer(badBody))
+	req.Host = "localhost"
 	req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationXML)
 
 	response, err := app.Test(req, -1)
@@ -766,6 +791,7 @@ func (suite *TestSuite) TestController_HandleGetOrCreateDatabaseV3_WrongTenant()
 		"classifier": map[string]interface{}{"namespace": "test-namespace", "tenantId": "classifier_tenant", "microserviceName": "test-service"},
 	})
 	req, _ := http.NewRequest(http.MethodPut, "/databases", bytes.NewBuffer(body))
+	req.Host = "localhost"
 	req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
 	req.Header.Set(TenantHeader, "header_tenant")
 
@@ -798,6 +824,7 @@ func (suite *TestSuite) TestController_HandleGetOrCreateDatabaseV3_NoOwner() {
 	})
 
 	req, _ := http.NewRequest(http.MethodPut, "/databases", bytes.NewBuffer(body))
+	req.Host = "localhost"
 	req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
 	req.Header.Set(AuthorizationContextName, testutils.AuthHeaderValue(testToken))
 
@@ -819,6 +846,7 @@ func (suite *TestSuite) TestController_HandleGetOrCreateDatabaseV3_ForwardingErr
 	body, _ := json.Marshal(map[string]interface{}{"classifier": map[string]interface{}{"namespace": "test-namespace", "microserviceName": "test-service"}})
 	testToken := testutils.GetSignedTokenWithClaims("test", nil, map[string]interface{}{"owner": "test-service"})
 	req, _ := http.NewRequest(http.MethodPut, "/databases", bytes.NewBuffer(body))
+	req.Host = "localhost"
 	req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
 	req.Header.Set(AuthorizationContextName, testutils.AuthHeaderValue(testToken))
 
@@ -849,6 +877,7 @@ func (suite *TestSuite) TestController_HandleGetOrCreateDatabaseV3_NamespaceErro
 
 	body, _ := json.Marshal(map[string]interface{}{"classifier": map[string]interface{}{"namespace": "test-namespace", "microserviceName": "test-service"}})
 	req, _ := http.NewRequest(http.MethodPut, "/databases", bytes.NewBuffer(body))
+	req.Host = "localhost"
 	req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
 
 	response, err := app.Test(req, -1)
@@ -872,6 +901,7 @@ func (suite *TestSuite) TestController_HandleGettingConnectionByClassifierV3_Wro
 		"classifier": map[string]interface{}{"namespace": "test-namespace", "tenantId": "classifier_tenant", "microserviceName": "test-service"},
 	})
 	req, _ := http.NewRequest(http.MethodPost, "/get-by-classifier", bytes.NewBuffer(body))
+	req.Host = "localhost"
 	req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
 	req.Header.Set(TenantHeader, "header_tenant")
 
@@ -896,6 +926,7 @@ func (suite *TestSuite) TestController_HandleGettingConnectionByClassifierV3_NoN
 		"classifier": map[string]interface{}{"microserviceName": "test-service"},
 	})
 	req, _ := http.NewRequest(http.MethodPost, "/get-by-classifier", bytes.NewBuffer(body))
+	req.Host = "localhost"
 	req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
 
 	response, err := app.Test(req, -1)
@@ -928,6 +959,7 @@ func (suite *TestSuite) TestController_HandleGettingConnectionByClassifierV3_NoO
 	})
 
 	req, _ := http.NewRequest(http.MethodPost, "/get-by-classifier", bytes.NewBuffer(body))
+	req.Host = "localhost"
 	req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
 	req.Header.Set(AuthorizationContextName, testutils.AuthHeaderValue(testToken))
 
@@ -951,6 +983,7 @@ func (suite *TestSuite) TestController_HandleGettingConnectionByClassifierV3_For
 	})
 	testToken := testutils.GetSignedTokenWithClaims("test", nil, map[string]interface{}{"owner": "test-service"})
 	req, _ := http.NewRequest(http.MethodPost, "/get-by-classifier", bytes.NewBuffer(body))
+	req.Host = "localhost"
 	req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
 	req.Header.Set(AuthorizationContextName, testutils.AuthHeaderValue(testToken))
 
@@ -982,6 +1015,7 @@ func (suite *TestSuite) TestController_HandleGettingConnectionByClassifierV3_Nam
 	body, _ := json.Marshal(map[string]interface{}{"classifier": map[string]interface{}{"namespace": "test-namespace", "microserviceName": "test-service"}})
 	//testToken := testutils.GetSignedTokenWithClaims("test", nil, map[string]interface{}{"owner": "test-service"})
 	req, _ := http.NewRequest(http.MethodPost, "/get-by-classifier", bytes.NewBuffer(body))
+	req.Host = "localhost"
 	req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
 	//req.Header.Set(AuthorizationContextName, testutils.AuthHeaderValue(testToken))
 
@@ -1011,6 +1045,7 @@ func (suite *TestSuite) TestController_HandleGettingPhysicalDatabases() {
 	app.Get("/list", suite.controller.HandleGettingPhysicalDatabases)
 
 	req, _ := http.NewRequest(http.MethodGet, "/list", bytes.NewBuffer(testRespBody))
+	req.Host = "localhost"
 
 	response, err := app.Test(req, -1)
 	assert.Nil(suite.T(), err)
@@ -1032,6 +1067,7 @@ func (suite *TestSuite) TestController_HandleGettingPhysicalDatabases_Forwarding
 	app.Get("/list", suite.controller.HandleGettingPhysicalDatabases)
 
 	req, _ := http.NewRequest(http.MethodGet, "/list", bytes.NewBuffer(body))
+	req.Host = "localhost"
 
 	response, err := app.Test(req, -1)
 	assert.Nil(suite.T(), err)
@@ -1074,6 +1110,7 @@ func (suite *TestSuite) TestControllerUtils_getTokenFromRequest_NoAuthToken() {
 	app.Get("/list", suite.handleGetToken)
 
 	req, _ := http.NewRequest(http.MethodGet, "/list", nil)
+	req.Host = "localhost"
 	response, err := app.Test(req, -1)
 
 	respBody, err := io.ReadAll(response.Body)
@@ -1107,6 +1144,7 @@ func (suite *TestSuite) TestController_ApplyConfig() {
 
 	testReqBody, _ := json.Marshal(map[string]interface{}{"kind": "DBaaS"})
 	req, _ := http.NewRequest(http.MethodPost, "/api/declarations/v1/apply", bytes.NewBuffer(testReqBody))
+	req.Host = "localhost"
 	req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
 
 	time.Sleep(5 * time.Second)
@@ -1132,6 +1170,7 @@ func (suite *TestSuite) TestController_GetOperationStatus() {
 	assert.Nil(suite.T(), err)
 	app.Get("/api/declarations/v1/operation/:trackingId/status", suite.controller.ForwardHandler)
 	req, _ := http.NewRequest(http.MethodGet, "/api/declarations/v1/operation/1234/status", nil)
+	req.Host = "localhost"
 
 	time.Sleep(5 * time.Second)
 	response, err := app.Test(req, -1)
@@ -1154,6 +1193,7 @@ func (suite *TestSuite) TestController_Terminate() {
 	assert.Nil(suite.T(), err)
 	app.Post("/api/declarations/v1/operation/:trackingId/terminate", suite.controller.ForwardHandler)
 	req, _ := http.NewRequest(http.MethodPost, "/api/declarations/v1/operation/1234/terminate", nil)
+	req.Host = "localhost"
 
 	time.Sleep(5 * time.Second)
 	response, err := app.Test(req, -1)
@@ -1172,6 +1212,7 @@ func (suite *TestSuite) TestController_ApplyConfig_ForwardingError() {
 
 	testReqBody, _ := json.Marshal(map[string]interface{}{"kind": "DBaaS"})
 	req, _ := http.NewRequest(http.MethodPost, "/api/declarations/v1/apply", bytes.NewBuffer(testReqBody))
+	req.Host = "localhost"
 
 	response, err := app.Test(req, -1)
 	assert.Nil(suite.T(), err)
@@ -1193,6 +1234,7 @@ func (suite *TestSuite) TestController_GetOperationStatus_ForwardingError() {
 	app.Get("/api/declarations/v1/operation/:trackingId/status", suite.controller.ForwardHandler)
 
 	req, _ := http.NewRequest(http.MethodGet, "/api/declarations/v1/operation/1234/status", nil)
+	req.Host = "localhost"
 
 	response, err := app.Test(req, -1)
 	assert.Nil(suite.T(), err)
@@ -1221,6 +1263,7 @@ func (suite *TestSuite) TestController_PostComposite() {
 	app.Post("/api/composite/v1/structures", suite.controller.ForwardHandler)
 
 	req, _ := http.NewRequest(http.MethodPost, "/api/composite/v1/structures", bytes.NewBuffer(testReqBody))
+	req.Host = "localhost"
 	req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
 	time.Sleep(5 * time.Second)
 	response, err := app.Test(req, -1)
