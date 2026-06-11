@@ -26,6 +26,7 @@ func (suite *TestSuite) TestController_HandleGetHealth() {
 	assert.Nil(suite.T(), err)
 	app.Get("/health", suite.controller.HandleGetHealth)
 	req, _ := http.NewRequest(http.MethodGet, "/health", nil)
+	req.Host = "localhost"
 	response, err := app.Test(req, -1)
 	assert.Nil(suite.T(), err)
 	respBody, err := io.ReadAll(response.Body)
@@ -40,6 +41,7 @@ func (suite *TestSuite) TestController_HandleProbes() {
 	assert.Nil(suite.T(), err)
 	app.Get("/probes/live", suite.controller.HandleProbes)
 	req, _ := http.NewRequest(http.MethodGet, "/probes/live", nil)
+	req.Host = "localhost"
 	response, err := app.Test(req, -1)
 	assert.Nil(suite.T(), err)
 	assert.Equal(suite.T(), http.StatusOK, response.StatusCode)
@@ -58,6 +60,7 @@ func (suite *TestSuite) TestController_HandleGetHealthNegative() {
 	assert.Nil(suite.T(), err)
 	app.Get("/health", controller.HandleGetHealth)
 	req, _ := http.NewRequest(http.MethodGet, "/health", nil)
+	req.Host = "localhost"
 	response, err := app.Test(req, -1)
 	assert.Nil(suite.T(), err)
 
