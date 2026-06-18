@@ -8,10 +8,10 @@ require (
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/google/uuid v1.6.0
-	github.com/netcracker/qubership-core-lib-go-actuator-common/v2 v2.7.0
-	github.com/netcracker/qubership-core-lib-go-fiber-server-utils/v2 v2.6.0
-	github.com/netcracker/qubership-core-lib-go-rest-utils/v2 v2.6.0
-	github.com/netcracker/qubership-core-lib-go/v3 v3.11.0
+	github.com/netcracker/qubership-core-lib-go-actuator-common/v2 v2.10.0
+	github.com/netcracker/qubership-core-lib-go-fiber-server-utils/v2 v2.9.0
+	github.com/netcracker/qubership-core-lib-go-rest-utils/v2 v2.7.0
+	github.com/netcracker/qubership-core-lib-go/v3 v3.11.1
 	github.com/stretchr/testify v1.11.1
 	github.com/swaggo/swag v1.16.6
 	github.com/urfave/cli/v2 v2.27.7
@@ -53,7 +53,7 @@ require (
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/klauspost/compress v1.18.6 // indirect
 	github.com/knadh/koanf v1.5.0 // indirect
-	github.com/knadh/koanf/v2 v2.3.4 // indirect
+	github.com/knadh/koanf/v2 v2.3.5 // indirect
 	github.com/mailru/easyjson v0.9.0 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
@@ -62,7 +62,7 @@ require (
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
-	github.com/netcracker/qubership-core-lib-go-error-handling/v3 v3.6.0 // indirect
+	github.com/netcracker/qubership-core-lib-go-error-handling/v3 v3.6.1 // indirect
 	github.com/openzipkin/zipkin-go v0.4.3 // indirect
 	github.com/pbnjay/memory v0.0.0-20210728143218-7b4eea64cf58 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
