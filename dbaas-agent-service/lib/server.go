@@ -15,7 +15,8 @@ import (
 	"github.com/netcracker/qubership-core-lib-go-actuator-common/v2/tracing"
 	fiberserver "github.com/netcracker/qubership-core-lib-go-fiber-server-utils/v2"
 	"github.com/netcracker/qubership-core-lib-go-fiber-server-utils/v2/server"
-	"github.com/netcracker/qubership-core-lib-go-rest-utils/v2/consul-propertysource"
+	consul "github.com/netcracker/qubership-core-lib-go-rest-utils/v2/consul-propertysource"
+	podsecrets "github.com/netcracker/qubership-core-lib-go-rest-utils/v2/podsecrets-propertysource"
 	routeregistration "github.com/netcracker/qubership-core-lib-go-rest-utils/v2/route-registration"
 	"github.com/netcracker/qubership-core-lib-go/v3/configloader"
 	constants "github.com/netcracker/qubership-core-lib-go/v3/const"
@@ -42,7 +43,9 @@ const (
 
 func init() {
 	consulPS := consul.NewLoggingPropertySource()
-	configloader.InitWithSourcesArray(append(configloader.BasePropertySources(), consulPS))
+	propertySources := configloader.BasePropertySources()
+	propertySources = podsecrets.AddPodSecretsPropertySource(propertySources)
+	configloader.InitWithSourcesArray(append(propertySources, consulPS))
 	consul.StartWatchingForPropertiesWithRetry(context.Background(), consulPS, func(event interface{}, err error) {
 		// your code here if any action on event is required
 	})
@@ -100,6 +103,11 @@ func initConfiguration() {
 
 //go:generate go run github.com/swaggo/swag/cmd/swag init --generalInfo /controller/dba_controller.go --parseDependency --parseGoList=false --parseDepth 2
 func RunServer() {
+	if podSecretsWatcher, err := podsecrets.StartWatcher(); err != nil {
+		logger.Warn("Pod-secrets watcher could not start: %v", err)
+	} else {
+		defer podSecretsWatcher.Stop()
+	}
 	initConfiguration()
 	app, err := fiberserver.New(fiber.Config{Network: fiber.NetworkTCP, IdleTimeout: 30 * time.Second}).
 		WithPprof("6060").
