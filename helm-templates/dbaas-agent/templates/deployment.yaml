@@ -62,6 +62,16 @@ spec:
             -   name: cacerts
                 emptyDir: {}
 {{ end }}
+            -   name: pod-secrets
+                projected:
+                    sources:
+                    -   secret:
+                            name: '{{ .Values.DBAAS_CREDENTIALS_SECRET }}'
+                            items:
+                            -   key: username
+                                path: DBAAS_CLUSTER_DBA_CREDENTIALS_USERNAME
+                            -   key: password
+                                path: DBAAS_CLUSTER_DBA_CREDENTIALS_PASSWORD
             containers:
             -   name: '{{ .Values.SERVICE_NAME }}'
                 image: '{{ .Values.IMAGE_REPOSITORY }}:{{ .Values.TAG }}'
@@ -72,6 +82,9 @@ spec:
                 -   name: cacerts
                     mountPath: /usr/local/share/ca-certificates
 {{ end }}
+                -   name: pod-secrets
+                    mountPath: /etc/secrets/pod-secrets
+                    readOnly: true
                 args:
                 - '/app/dbaas-agent'
                 env:
@@ -104,16 +117,6 @@ spec:
                     valueFrom:
                       fieldRef:
                         fieldPath: metadata.namespace
-                -   name: DBAAS_CLUSTER_DBA_CREDENTIALS_USERNAME
-                    valueFrom:
-                        secretKeyRef:
-                            name: 'cluster-dba-credentials-secret'
-                            key: username
-                -   name: DBAAS_CLUSTER_DBA_CREDENTIALS_PASSWORD
-                    valueFrom:
-                        secretKeyRef:
-                            name: 'cluster-dba-credentials-secret'
-                            key: password
                 -   name: DEPRECATED_API_DISABLED
                     value: '{{ .Values.DISABLE_DEPRECATED_API }}'
                 -   name: SERVICE_MESH_TYPE
