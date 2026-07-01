@@ -22,3 +22,4 @@ CONSUL_ENABLED: false
 CONSUL_URL: ''
 
 SERVICE_MESH_TYPE: 'Core' # Options: Core, Istio
+KUBERNETES_M2M_ENABLED: false
