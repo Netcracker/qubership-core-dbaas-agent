@@ -11,7 +11,7 @@ require (
 	github.com/netcracker/qubership-core-lib-go-actuator-common/v2 v2.10.1
 	github.com/netcracker/qubership-core-lib-go-fiber-server-utils/v2 v2.9.1
 	github.com/netcracker/qubership-core-lib-go-rest-utils/v2 v2.7.0
-	github.com/netcracker/qubership-core-lib-go/v3 v3.11.2
+	github.com/netcracker/qubership-core-lib-go/v3 v3.12.0
 	github.com/stretchr/testify v1.11.1
 	github.com/swaggo/swag v1.16.6
 	github.com/urfave/cli/v2 v2.27.7
