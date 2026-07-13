@@ -1,12 +1,12 @@
 package controller
 
 import (
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 	"github.com/valyala/fasthttp"
 )
 
-func (controller *Controller) HandleGetHealth(c *fiber.Ctx) error {
-	userCtx := c.UserContext()
+func (controller *Controller) HandleGetHealth(c fiber.Ctx) error {
+	userCtx := c.Context()
 	resp, err := controller.forwarder.DoRequest(userCtx, fasthttp.MethodGet, "/health", nil)
 	defer fasthttp.ReleaseResponse(resp)
 	if err != nil {
@@ -16,7 +16,7 @@ func (controller *Controller) HandleGetHealth(c *fiber.Ctx) error {
 	return returnDbaasResponse(userCtx, c, resp)
 }
 
-func (controller *Controller) HandleProbes(c *fiber.Ctx) error {
+func (controller *Controller) HandleProbes(c fiber.Ctx) error {
 	c.Status(fasthttp.StatusOK)
 	return nil
 }
