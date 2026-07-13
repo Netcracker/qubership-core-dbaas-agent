@@ -1,4 +1,4 @@
-﻿package controller
+package controller
 
 import (
 	"bytes"
@@ -10,13 +10,13 @@ import (
 	"testing"
 	"time"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 	"github.com/netcracker/qubership-core-dbaas-agent/dbaas-agent-service/v2/client"
 	_ "github.com/netcracker/qubership-core-dbaas-agent/dbaas-agent-service/v2/config"
 	"github.com/netcracker/qubership-core-dbaas-agent/dbaas-agent-service/v2/service"
 	"github.com/netcracker/qubership-core-dbaas-agent/dbaas-agent-service/v2/testutils"
 	"github.com/netcracker/qubership-core-lib-go-actuator-common/v2/apiversion"
-	fiberserver "github.com/netcracker/qubership-core-lib-go-fiber-server-utils/v2"
+	fiberserver "github.com/netcracker/qubership-core-lib-go-fiber-server-utils/v3"
 	"github.com/netcracker/qubership-core-lib-go/v3/configloader"
 	constants "github.com/netcracker/qubership-core-lib-go/v3/const"
 	"github.com/stretchr/testify/assert"
@@ -89,7 +89,7 @@ func (suite *TestSuite) TestController_HandleGettingConnectionByClassifierV3() {
 	req.Header.Set(AuthorizationContextName, testutils.AuthHeaderValue(testToken))
 
 	time.Sleep(5 * time.Second)
-	response, err := app.Test(req, -1)
+	response, err := app.Test(req, fiber.TestConfig{Timeout: 0, FailOnTimeout: false})
 	assert.Nil(suite.T(), err)
 	respBody, err := io.ReadAll(response.Body)
 	assert.Nil(suite.T(), err)
@@ -114,7 +114,7 @@ func (suite *TestSuite) TestController_ErrorReadBody_HandleGettingConnectionByCl
 	req.Host = "localhost"
 
 	time.Sleep(5 * time.Second)
-	response, err := app.Test(req, -1)
+	response, err := app.Test(req, fiber.TestConfig{Timeout: 0, FailOnTimeout: false})
 	assert.Nil(suite.T(), err)
 	assert.Equal(suite.T(), fiber.StatusInternalServerError, response.StatusCode)
 }
@@ -138,7 +138,7 @@ func (suite *TestSuite) TestController_HandleDeletionByClassifierV3() {
 	req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
 	req.Header.Set(AuthorizationContextName, testutils.AuthHeaderValue(testToken))
 
-	response, err := app.Test(req, -1)
+	response, err := app.Test(req, fiber.TestConfig{Timeout: 0, FailOnTimeout: false})
 	assert.Nil(suite.T(), err)
 	respBody, err := io.ReadAll(response.Body)
 	assert.Nil(suite.T(), err)
@@ -157,13 +157,13 @@ func (suite *TestSuite) TestController_HandleDeletionByClassifierV3_WrongBodyCon
 	req.Host = "localhost"
 	req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationXML)
 
-	response, err := app.Test(req, -1)
+	response, err := app.Test(req, fiber.TestConfig{Timeout: 0, FailOnTimeout: false})
 	assert.Nil(suite.T(), err)
 	respBody, err := io.ReadAll(response.Body)
 	assert.Nil(suite.T(), err)
 
 	testRespBody, _ := json.Marshal(map[string]interface{}{
-		"error": "failed to unmarshal: EOF",
+		"error": "bind from body: failed to unmarshal xml: EOF",
 	})
 	assert.Equal(suite.T(), http.StatusInternalServerError, response.StatusCode)
 	assert.Equal(suite.T(), testRespBody, respBody)
@@ -190,7 +190,7 @@ func (suite *TestSuite) TestController_HandleDeletionByClassifierV3_NoOwner() {
 	req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
 	req.Header.Set(AuthorizationContextName, testutils.AuthHeaderValue(testToken))
 
-	response, err := app.Test(req, -1)
+	response, err := app.Test(req, fiber.TestConfig{Timeout: 0, FailOnTimeout: false})
 	assert.Nil(suite.T(), err)
 	respBody, err := io.ReadAll(response.Body)
 	assert.Nil(suite.T(), err)
@@ -213,7 +213,7 @@ func (suite *TestSuite) TestController_HandleDeletionByClassifierV3_ForwardingEr
 	req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
 	req.Header.Set(AuthorizationContextName, testutils.AuthHeaderValue(testToken))
 
-	response, err := app.Test(req, -1)
+	response, err := app.Test(req, fiber.TestConfig{Timeout: 0, FailOnTimeout: false})
 	assert.Nil(suite.T(), err)
 	respBody, err := io.ReadAll(response.Body)
 	assert.Nil(suite.T(), err)
@@ -245,7 +245,7 @@ func (suite *TestSuite) TestController_HandleDeletionByClassifierV3_NamespaceErr
 	req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
 	req.Header.Set(AuthorizationContextName, testutils.AuthHeaderValue(testToken))
 
-	response, err := app.Test(req, -1)
+	response, err := app.Test(req, fiber.TestConfig{Timeout: 0, FailOnTimeout: false})
 	assert.Nil(suite.T(), err)
 	respBody, err := io.ReadAll(response.Body)
 	assert.Nil(suite.T(), err)
@@ -279,7 +279,7 @@ func (suite *TestSuite) TestController_HandleGetOrCreateDatabaseV3() {
 	req.Header.Set(AuthorizationContextName, testutils.AuthHeaderValue(testToken))
 
 	time.Sleep(5 * time.Second)
-	response, err := app.Test(req, -1)
+	response, err := app.Test(req, fiber.TestConfig{Timeout: 0, FailOnTimeout: false})
 	assert.Nil(suite.T(), err)
 	respBody, err := io.ReadAll(response.Body)
 	assert.Nil(suite.T(), err)
@@ -307,7 +307,7 @@ func (suite *TestSuite) TestController_HandleRegistrationExternallyManageableDBV
 	req.Header.Set(AuthorizationContextName, testutils.AuthHeaderValue(testToken))
 
 	time.Sleep(5 * time.Second)
-	response, err := app.Test(req, -1)
+	response, err := app.Test(req, fiber.TestConfig{Timeout: 0, FailOnTimeout: false})
 	assert.Nil(suite.T(), err)
 	respBody, err := io.ReadAll(response.Body)
 	assert.Nil(suite.T(), err)
@@ -339,7 +339,7 @@ func (suite *TestSuite) TestController_ErrorTenant_HandleRegistrationExternallyM
 	req.Header.Set(AuthorizationContextName, testutils.AuthHeaderValue(testToken))
 
 	time.Sleep(5 * time.Second)
-	response, err := app.Test(req, -1)
+	response, err := app.Test(req, fiber.TestConfig{Timeout: 0, FailOnTimeout: false})
 	assert.Nil(suite.T(), err)
 	assert.Equal(suite.T(), fiber.StatusOK, response.StatusCode)
 }
@@ -356,7 +356,7 @@ func (suite *TestSuite) TestController_HandleRegistrationExternallyManageableDBV
 	req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationXML)
 	req.Header.Set(AuthorizationContextName, testutils.AuthHeaderValue(testToken))
 
-	response, err := app.Test(req, -1)
+	response, err := app.Test(req, fiber.TestConfig{Timeout: 0, FailOnTimeout: false})
 	assert.Nil(suite.T(), err)
 	respBody, err := io.ReadAll(response.Body)
 	assert.Nil(suite.T(), err)
@@ -378,7 +378,7 @@ func (suite *TestSuite) TestController_HandleRegistrationExternallyManageableDBV
 	req.Host = "localhost"
 	req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
 
-	response, err := app.Test(req, -1)
+	response, err := app.Test(req, fiber.TestConfig{Timeout: 0, FailOnTimeout: false})
 	assert.Nil(suite.T(), err)
 	respBody, err := io.ReadAll(response.Body)
 	assert.Nil(suite.T(), err)
@@ -408,7 +408,7 @@ func (suite *TestSuite) TestController_HandleRegistrationExternallyManageableDBV
 	req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
 	req.Header.Set(AuthorizationContextName, testutils.AuthHeaderValue(testToken))
 
-	response, err := app.Test(req, -1)
+	response, err := app.Test(req, fiber.TestConfig{Timeout: 0, FailOnTimeout: false})
 	assert.Nil(suite.T(), err)
 	respBody, err := io.ReadAll(response.Body)
 	assert.Nil(suite.T(), err)
@@ -430,7 +430,7 @@ func (suite *TestSuite) TestController_HandleRegistrationExternallyManageableDBV
 	req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
 	req.Header.Set(AuthorizationContextName, testutils.AuthHeaderValue(testToken))
 
-	response, err := app.Test(req, -1)
+	response, err := app.Test(req, fiber.TestConfig{Timeout: 0, FailOnTimeout: false})
 	assert.Nil(suite.T(), err)
 	respBody, err := io.ReadAll(response.Body)
 	assert.Nil(suite.T(), err)
@@ -457,7 +457,7 @@ func (suite *TestSuite) TestController_HandleRegistrationExternallyManageableDBV
 	req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
 	req.Header.Set(AuthorizationContextName, testutils.AuthHeaderValue(testToken))
 
-	response, err := app.Test(req, -1)
+	response, err := app.Test(req, fiber.TestConfig{Timeout: 0, FailOnTimeout: false})
 	assert.Nil(suite.T(), err)
 	respBody, err := io.ReadAll(response.Body)
 	assert.Nil(suite.T(), err)
@@ -487,7 +487,7 @@ func (suite *TestSuite) TestController_HandleRegistrationExternallyManageableDBV
 	req.Host = "localhost"
 	req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
 
-	response, err := app.Test(req, -1)
+	response, err := app.Test(req, fiber.TestConfig{Timeout: 0, FailOnTimeout: false})
 	assert.Nil(suite.T(), err)
 	respBody, err := io.ReadAll(response.Body)
 	assert.Nil(suite.T(), err)
@@ -541,7 +541,7 @@ func (suite *TestSuite) TestController_HandleGetApiVersion() {
 	req.Host = "localhost"
 
 	time.Sleep(5 * time.Second)
-	response, err := app.Test(req, -1)
+	response, err := app.Test(req, fiber.TestConfig{Timeout: 0, FailOnTimeout: false})
 	assert.Nil(suite.T(), err)
 	respBody, err := io.ReadAll(response.Body)
 	assert.Nil(suite.T(), err)
@@ -564,7 +564,7 @@ func (suite *TestSuite) TestController_HandleGetApiVersion_ForwardingError() {
 	req, _ := http.NewRequest(http.MethodGet, "/api-version", nil)
 	req.Host = "localhost"
 
-	response, err := app.Test(req, -1)
+	response, err := app.Test(req, fiber.TestConfig{Timeout: 0, FailOnTimeout: false})
 	assert.Nil(suite.T(), err)
 	assert.Nil(suite.T(), err)
 	assert.Equal(suite.T(), http.StatusInternalServerError, response.StatusCode)
@@ -589,7 +589,7 @@ func (suite *TestSuite) TestController_HandleGetAllDatabasesByNamespace() {
 	req.Header.Set(AuthorizationContextName, testutils.AuthHeaderValue(testToken))
 
 	time.Sleep(5 * time.Second)
-	response, err := app.Test(req, -1)
+	response, err := app.Test(req, fiber.TestConfig{Timeout: 0, FailOnTimeout: false})
 	assert.Nil(suite.T(), err)
 	respBody, err := io.ReadAll(response.Body)
 	assert.Nil(suite.T(), err)
@@ -607,7 +607,7 @@ func (suite *TestSuite) TestController_HandleGetAllDatabasesByNamespaceV3_Forwar
 	req, _ := http.NewRequest(http.MethodGet, "/list", nil)
 	req.Host = "localhost"
 
-	response, err := app.Test(req, -1)
+	response, err := app.Test(req, fiber.TestConfig{Timeout: 0, FailOnTimeout: false})
 	assert.Nil(suite.T(), err)
 	respBody, err := io.ReadAll(response.Body)
 	assert.Nil(suite.T(), err)
@@ -635,7 +635,7 @@ func (suite *TestSuite) TestController_HandleGetAllDatabasesByNamespaceV3_Namesp
 	req, _ := http.NewRequest(http.MethodGet, "/list", nil)
 	req.Host = "localhost"
 
-	response, err := app.Test(req, -1)
+	response, err := app.Test(req, fiber.TestConfig{Timeout: 0, FailOnTimeout: false})
 	assert.Nil(suite.T(), err)
 	respBody, err := io.ReadAll(response.Body)
 	assert.Nil(suite.T(), err)
@@ -668,7 +668,7 @@ func (suite *TestSuite) TestController_RequestMustContainClassifier() {
 	req.Header.Set(AuthorizationContextName, testutils.AuthHeaderValue(testToken))
 
 	time.Sleep(5 * time.Second)
-	response, err := app.Test(req, -1)
+	response, err := app.Test(req, fiber.TestConfig{Timeout: 0, FailOnTimeout: false})
 	assert.Nil(suite.T(), err)
 	assert.Equal(suite.T(), http.StatusBadRequest, response.StatusCode)
 
@@ -699,7 +699,7 @@ func (suite *TestSuite) TestController_RequestMustContainNamespaceInClassifier()
 	req.Header.Set(AuthorizationContextName, testutils.AuthHeaderValue(testToken))
 
 	time.Sleep(5 * time.Second)
-	response, err := app.Test(req, -1)
+	response, err := app.Test(req, fiber.TestConfig{Timeout: 0, FailOnTimeout: false})
 	assert.Nil(suite.T(), err)
 	assert.Equal(suite.T(), http.StatusBadRequest, response.StatusCode)
 
@@ -748,7 +748,7 @@ func (suite *TestSuite) TestController_HandleGetOrCreateDatabaseV3_EmptyBody() {
 	req, _ := http.NewRequest(http.MethodPut, "/databases", nil)
 	req.Host = "localhost"
 
-	response, err := app.Test(req, -1)
+	response, err := app.Test(req, fiber.TestConfig{Timeout: 0, FailOnTimeout: false})
 	assert.Nil(suite.T(), err)
 	respBody, err := io.ReadAll(response.Body)
 	assert.Nil(suite.T(), err)
@@ -770,7 +770,7 @@ func (suite *TestSuite) TestController_HandleGetOrCreateDatabaseV3_WrongBodyCont
 	req.Host = "localhost"
 	req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationXML)
 
-	response, err := app.Test(req, -1)
+	response, err := app.Test(req, fiber.TestConfig{Timeout: 0, FailOnTimeout: false})
 	assert.Nil(suite.T(), err)
 	respBody, err := io.ReadAll(response.Body)
 	assert.Nil(suite.T(), err)
@@ -795,7 +795,7 @@ func (suite *TestSuite) TestController_HandleGetOrCreateDatabaseV3_WrongTenant()
 	req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
 	req.Header.Set(TenantHeader, "header_tenant")
 
-	response, err := app.Test(req, -1)
+	response, err := app.Test(req, fiber.TestConfig{Timeout: 0, FailOnTimeout: false})
 	assert.Nil(suite.T(), err)
 	respBody, err := io.ReadAll(response.Body)
 	assert.Nil(suite.T(), err)
@@ -828,7 +828,7 @@ func (suite *TestSuite) TestController_HandleGetOrCreateDatabaseV3_NoOwner() {
 	req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
 	req.Header.Set(AuthorizationContextName, testutils.AuthHeaderValue(testToken))
 
-	response, err := app.Test(req, -1)
+	response, err := app.Test(req, fiber.TestConfig{Timeout: 0, FailOnTimeout: false})
 	assert.Nil(suite.T(), err)
 	respBody, err := io.ReadAll(response.Body)
 	assert.Nil(suite.T(), err)
@@ -850,7 +850,7 @@ func (suite *TestSuite) TestController_HandleGetOrCreateDatabaseV3_ForwardingErr
 	req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
 	req.Header.Set(AuthorizationContextName, testutils.AuthHeaderValue(testToken))
 
-	response, err := app.Test(req, -1)
+	response, err := app.Test(req, fiber.TestConfig{Timeout: 0, FailOnTimeout: false})
 	assert.Nil(suite.T(), err)
 	respBody, err := io.ReadAll(response.Body)
 	assert.Nil(suite.T(), err)
@@ -880,7 +880,7 @@ func (suite *TestSuite) TestController_HandleGetOrCreateDatabaseV3_NamespaceErro
 	req.Host = "localhost"
 	req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
 
-	response, err := app.Test(req, -1)
+	response, err := app.Test(req, fiber.TestConfig{Timeout: 0, FailOnTimeout: false})
 	assert.Nil(suite.T(), err)
 	respBody, err := io.ReadAll(response.Body)
 	assert.Nil(suite.T(), err)
@@ -905,7 +905,7 @@ func (suite *TestSuite) TestController_HandleGettingConnectionByClassifierV3_Wro
 	req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
 	req.Header.Set(TenantHeader, "header_tenant")
 
-	response, err := app.Test(req, -1)
+	response, err := app.Test(req, fiber.TestConfig{Timeout: 0, FailOnTimeout: false})
 	assert.Nil(suite.T(), err)
 	respBody, err := io.ReadAll(response.Body)
 	assert.Nil(suite.T(), err)
@@ -929,7 +929,7 @@ func (suite *TestSuite) TestController_HandleGettingConnectionByClassifierV3_NoN
 	req.Host = "localhost"
 	req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
 
-	response, err := app.Test(req, -1)
+	response, err := app.Test(req, fiber.TestConfig{Timeout: 0, FailOnTimeout: false})
 	assert.Nil(suite.T(), err)
 	respBody, err := io.ReadAll(response.Body)
 	assert.Nil(suite.T(), err)
@@ -963,7 +963,7 @@ func (suite *TestSuite) TestController_HandleGettingConnectionByClassifierV3_NoO
 	req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
 	req.Header.Set(AuthorizationContextName, testutils.AuthHeaderValue(testToken))
 
-	response, err := app.Test(req, -1)
+	response, err := app.Test(req, fiber.TestConfig{Timeout: 0, FailOnTimeout: false})
 	assert.Nil(suite.T(), err)
 	respBody, err := io.ReadAll(response.Body)
 	assert.Nil(suite.T(), err)
@@ -987,7 +987,7 @@ func (suite *TestSuite) TestController_HandleGettingConnectionByClassifierV3_For
 	req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
 	req.Header.Set(AuthorizationContextName, testutils.AuthHeaderValue(testToken))
 
-	response, err := app.Test(req, -1)
+	response, err := app.Test(req, fiber.TestConfig{Timeout: 0, FailOnTimeout: false})
 	assert.Nil(suite.T(), err)
 	respBody, err := io.ReadAll(response.Body)
 	assert.Nil(suite.T(), err)
@@ -1019,7 +1019,7 @@ func (suite *TestSuite) TestController_HandleGettingConnectionByClassifierV3_Nam
 	req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
 	//req.Header.Set(AuthorizationContextName, testutils.AuthHeaderValue(testToken))
 
-	response, err := app.Test(req, -1)
+	response, err := app.Test(req, fiber.TestConfig{Timeout: 0, FailOnTimeout: false})
 	assert.Nil(suite.T(), err)
 	respBody, err := io.ReadAll(response.Body)
 	assert.Nil(suite.T(), err)
@@ -1047,7 +1047,7 @@ func (suite *TestSuite) TestController_HandleGettingPhysicalDatabases() {
 	req, _ := http.NewRequest(http.MethodGet, "/list", bytes.NewBuffer(testRespBody))
 	req.Host = "localhost"
 
-	response, err := app.Test(req, -1)
+	response, err := app.Test(req, fiber.TestConfig{Timeout: 0, FailOnTimeout: false})
 	assert.Nil(suite.T(), err)
 	respBody, err := io.ReadAll(response.Body)
 	assert.Nil(suite.T(), err)
@@ -1069,7 +1069,7 @@ func (suite *TestSuite) TestController_HandleGettingPhysicalDatabases_Forwarding
 	req, _ := http.NewRequest(http.MethodGet, "/list", bytes.NewBuffer(body))
 	req.Host = "localhost"
 
-	response, err := app.Test(req, -1)
+	response, err := app.Test(req, fiber.TestConfig{Timeout: 0, FailOnTimeout: false})
 	assert.Nil(suite.T(), err)
 	respBody, err := io.ReadAll(response.Body)
 	assert.Nil(suite.T(), err)
@@ -1111,14 +1111,14 @@ func (suite *TestSuite) TestControllerUtils_getTokenFromRequest_NoAuthToken() {
 
 	req, _ := http.NewRequest(http.MethodGet, "/list", nil)
 	req.Host = "localhost"
-	response, err := app.Test(req, -1)
+	response, err := app.Test(req, fiber.TestConfig{Timeout: 0, FailOnTimeout: false})
 
 	respBody, err := io.ReadAll(response.Body)
 	assert.Nil(suite.T(), err)
 	assert.Equal(suite.T(), []byte("controller: unauthorized request"), respBody)
 }
 
-func (suite *TestSuite) handleGetToken(ctx *fiber.Ctx) error {
+func (suite *TestSuite) handleGetToken(ctx fiber.Ctx) error {
 	token, err := suite.controller.GetTokenFromRequest(context.Background(), ctx)
 	if err != nil {
 		return RespondWithBytes(ctx, 0, []byte(err.Error()))
@@ -1148,7 +1148,7 @@ func (suite *TestSuite) TestController_ApplyConfig() {
 	req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
 
 	time.Sleep(5 * time.Second)
-	response, err := app.Test(req, -1)
+	response, err := app.Test(req, fiber.TestConfig{Timeout: 0, FailOnTimeout: false})
 	assert.Nil(suite.T(), err)
 	respBody, err := io.ReadAll(response.Body)
 	assert.Nil(suite.T(), err)
@@ -1173,7 +1173,7 @@ func (suite *TestSuite) TestController_GetOperationStatus() {
 	req.Host = "localhost"
 
 	time.Sleep(5 * time.Second)
-	response, err := app.Test(req, -1)
+	response, err := app.Test(req, fiber.TestConfig{Timeout: 0, FailOnTimeout: false})
 	assert.Nil(suite.T(), err)
 	respBody, err := io.ReadAll(response.Body)
 	assert.Nil(suite.T(), err)
@@ -1196,7 +1196,7 @@ func (suite *TestSuite) TestController_Terminate() {
 	req.Host = "localhost"
 
 	time.Sleep(5 * time.Second)
-	response, err := app.Test(req, -1)
+	response, err := app.Test(req, fiber.TestConfig{Timeout: 0, FailOnTimeout: false})
 	assert.Nil(suite.T(), err)
 	assert.Nil(suite.T(), err)
 
@@ -1214,7 +1214,7 @@ func (suite *TestSuite) TestController_ApplyConfig_ForwardingError() {
 	req, _ := http.NewRequest(http.MethodPost, "/api/declarations/v1/apply", bytes.NewBuffer(testReqBody))
 	req.Host = "localhost"
 
-	response, err := app.Test(req, -1)
+	response, err := app.Test(req, fiber.TestConfig{Timeout: 0, FailOnTimeout: false})
 	assert.Nil(suite.T(), err)
 	respBody, err := io.ReadAll(response.Body)
 	assert.Nil(suite.T(), err)
@@ -1236,7 +1236,7 @@ func (suite *TestSuite) TestController_GetOperationStatus_ForwardingError() {
 	req, _ := http.NewRequest(http.MethodGet, "/api/declarations/v1/operation/1234/status", nil)
 	req.Host = "localhost"
 
-	response, err := app.Test(req, -1)
+	response, err := app.Test(req, fiber.TestConfig{Timeout: 0, FailOnTimeout: false})
 	assert.Nil(suite.T(), err)
 	respBody, err := io.ReadAll(response.Body)
 	assert.Nil(suite.T(), err)
@@ -1266,7 +1266,7 @@ func (suite *TestSuite) TestController_PostComposite() {
 	req.Host = "localhost"
 	req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
 	time.Sleep(5 * time.Second)
-	response, err := app.Test(req, -1)
+	response, err := app.Test(req, fiber.TestConfig{Timeout: 0, FailOnTimeout: false})
 	assert.Nil(suite.T(), err)
 	assert.Nil(suite.T(), err)
 

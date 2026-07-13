@@ -6,15 +6,15 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 	"github.com/netcracker/qubership-core-dbaas-agent/dbaas-agent-service/v2/client"
 	"github.com/netcracker/qubership-core-dbaas-agent/dbaas-agent-service/v2/controller"
 	"github.com/netcracker/qubership-core-dbaas-agent/dbaas-agent-service/v2/docs"
 	"github.com/netcracker/qubership-core-dbaas-agent/dbaas-agent-service/v2/service"
 	"github.com/netcracker/qubership-core-lib-go-actuator-common/v2/apiversion"
 	"github.com/netcracker/qubership-core-lib-go-actuator-common/v2/tracing"
-	fiberserver "github.com/netcracker/qubership-core-lib-go-fiber-server-utils/v2"
-	"github.com/netcracker/qubership-core-lib-go-fiber-server-utils/v2/server"
+	fiberserver "github.com/netcracker/qubership-core-lib-go-fiber-server-utils/v3"
+	"github.com/netcracker/qubership-core-lib-go-fiber-server-utils/v3/server"
 	consul "github.com/netcracker/qubership-core-lib-go-rest-utils/v2/consul-propertysource"
 	podsecrets "github.com/netcracker/qubership-core-lib-go-rest-utils/v2/podsecrets-propertysource"
 	routeregistration "github.com/netcracker/qubership-core-lib-go-rest-utils/v2/route-registration"
@@ -109,7 +109,7 @@ func RunServer() {
 		defer podSecretsWatcher.Stop()
 	}
 	initConfiguration()
-	app, err := fiberserver.New(fiber.Config{Network: fiber.NetworkTCP, IdleTimeout: 30 * time.Second}).
+	app, err := fiberserver.New(fiber.Config{IdleTimeout: 30 * time.Second}).
 		WithPprof("6060").
 		WithPrometheus("/prometheus").
 		WithTracer(tracing.NewZipkinTracer()).
@@ -146,7 +146,7 @@ func RunServer() {
 	app.Get("/probes/ready", apiController.HandleProbes)
 
 	// swagger
-	app.Get("/swagger-ui/swagger.json", func(ctx *fiber.Ctx) error {
+	app.Get("/swagger-ui/swagger.json", func(ctx fiber.Ctx) error {
 		ctx.Set("Content-Type", "application/json")
 		return ctx.Status(http.StatusOK).SendString(docs.SwaggerInfo.ReadDoc())
 	})
