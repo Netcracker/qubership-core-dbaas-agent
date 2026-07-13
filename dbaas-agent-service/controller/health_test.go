@@ -5,9 +5,10 @@ import (
 	"io"
 	"net/http"
 
+	"github.com/gofiber/fiber/v3"
 	"github.com/netcracker/qubership-core-dbaas-agent/dbaas-agent-service/v2/service"
 	"github.com/netcracker/qubership-core-dbaas-agent/dbaas-agent-service/v2/testutils"
-	fiberserver "github.com/netcracker/qubership-core-lib-go-fiber-server-utils/v2"
+	fiberserver "github.com/netcracker/qubership-core-lib-go-fiber-server-utils/v3"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -27,7 +28,7 @@ func (suite *TestSuite) TestController_HandleGetHealth() {
 	app.Get("/health", suite.controller.HandleGetHealth)
 	req, _ := http.NewRequest(http.MethodGet, "/health", nil)
 	req.Host = "localhost"
-	response, err := app.Test(req, -1)
+	response, err := app.Test(req, fiber.TestConfig{Timeout: 0, FailOnTimeout: false})
 	assert.Nil(suite.T(), err)
 	respBody, err := io.ReadAll(response.Body)
 	assert.Nil(suite.T(), err)
@@ -42,7 +43,7 @@ func (suite *TestSuite) TestController_HandleProbes() {
 	app.Get("/probes/live", suite.controller.HandleProbes)
 	req, _ := http.NewRequest(http.MethodGet, "/probes/live", nil)
 	req.Host = "localhost"
-	response, err := app.Test(req, -1)
+	response, err := app.Test(req, fiber.TestConfig{Timeout: 0, FailOnTimeout: false})
 	assert.Nil(suite.T(), err)
 	assert.Equal(suite.T(), http.StatusOK, response.StatusCode)
 }
@@ -61,7 +62,7 @@ func (suite *TestSuite) TestController_HandleGetHealthNegative() {
 	app.Get("/health", controller.HandleGetHealth)
 	req, _ := http.NewRequest(http.MethodGet, "/health", nil)
 	req.Host = "localhost"
-	response, err := app.Test(req, -1)
+	response, err := app.Test(req, fiber.TestConfig{Timeout: 0, FailOnTimeout: false})
 	assert.Nil(suite.T(), err)
 
 	assert.True(suite.T(), response.StatusCode > 400)
