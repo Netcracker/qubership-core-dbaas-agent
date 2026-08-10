@@ -4,10 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"github.com/netcracker/qubership-core-dbaas-agent/dbaas-agent-service/v2/config"
 	"os"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/netcracker/qubership-core-dbaas-agent/dbaas-agent-service/v2/config"
+
+	"github.com/gofiber/fiber/v3"
 	_ "github.com/netcracker/qubership-core-dbaas-agent/dbaas-agent-service/v2/domain"
 	"github.com/netcracker/qubership-core-dbaas-agent/dbaas-agent-service/v2/service"
 	"github.com/netcracker/qubership-core-lib-go/v3/configloader"
@@ -70,8 +71,8 @@ func NewController(securityService *service.SecurityService, forwarder *service.
 // @Failure 400 {object}    map[string]string
 // @Failure 500 {object}	map[string]string
 // @Router /api/v3/dbaas/{namespace}/databases [put]
-func (controller *Controller) HandleGetOrCreateDatabaseV3(c *fiber.Ctx) error {
-	userCtx := c.UserContext()
+func (controller *Controller) HandleGetOrCreateDatabaseV3(c fiber.Ctx) error {
+	userCtx := c.Context()
 	logger.InfoC(userCtx, MsgReceivedRequest, c.Method(), c.Path())
 
 	body, _, err := readRequestBody(userCtx, c)
@@ -170,8 +171,8 @@ func GetNamespaceFromClassifier(classifier interface{}) (string, error) {
 // @Failure 404 {object}    map[string]string
 // @Failure 500 {object}	map[string]string
 // @Router /api/v3/dbaas/{namespace}/databases/get-by-classifier/{type} [post]
-func (controller *Controller) HandleGettingConnectionByClassifierV3(c *fiber.Ctx) error {
-	userCtx := c.UserContext()
+func (controller *Controller) HandleGettingConnectionByClassifierV3(c fiber.Ctx) error {
+	userCtx := c.Context()
 	logger.InfoC(userCtx, MsgReceivedRequest, c.Method(), c.Path())
 
 	body, _, err := readRequestBody(userCtx, c)
@@ -233,8 +234,8 @@ func (controller *Controller) HandleGettingConnectionByClassifierV3(c *fiber.Ctx
 // @Success 200 {object}    []byte
 // @Failure 404 {object}    map[string]string
 // @Router /api/v3/dbaas/{type}/physical_databases [get]
-func (controller *Controller) HandleGettingPhysicalDatabases(ctx *fiber.Ctx) error {
-	userContext := ctx.UserContext()
+func (controller *Controller) HandleGettingPhysicalDatabases(ctx fiber.Ctx) error {
+	userContext := ctx.Context()
 
 	dbType := ctx.Params("type")
 	logger.InfoC(userContext, "Request to get all available physical databases of type %v", dbType)
@@ -263,8 +264,8 @@ func (controller *Controller) HandleGettingPhysicalDatabases(ctx *fiber.Ctx) err
 // @Failure 404 {object}    map[string]string
 // @Failure 500 {object}	map[string]string
 // @Router /api/v3/dbaas/{namespace}/databases/{type} [delete]
-func (controller *Controller) HandleDeletionByClassifier(c *fiber.Ctx) error {
-	userCtx := c.UserContext()
+func (controller *Controller) HandleDeletionByClassifier(c fiber.Ctx) error {
+	userCtx := c.Context()
 	logger.InfoC(userCtx, MsgReceivedRequest, c.Method(), c.Path())
 
 	body, _, err := readRequestBody(userCtx, c)
@@ -319,8 +320,8 @@ func (controller *Controller) HandleDeletionByClassifier(c *fiber.Ctx) error {
 // @Failure 409 {object}    map[string]string
 // @Failure 500 {object}	map[string]string
 // @Router /api/v3/dbaas/{namespace}/databases/registration/externally_manageable [put]
-func (controller *Controller) HandleRegistrationExternallyManageableDBV3(c *fiber.Ctx) error {
-	userCtx := c.UserContext()
+func (controller *Controller) HandleRegistrationExternallyManageableDBV3(c fiber.Ctx) error {
+	userCtx := c.Context()
 	logger.InfoC(userCtx, MsgReceivedRequest, c.Method(), c.Path())
 
 	body, _, err := readRequestBody(userCtx, c)
@@ -392,8 +393,8 @@ func (controller *Controller) HandleRegistrationExternallyManageableDBV3(c *fibe
 // @Failure 403 {object}	map[string]string
 // @Failure 500 {object}	map[string]string
 // @Router /api/v3/dbaas/{namespace}/databases/list [get]
-func (controller *Controller) HandleGettingAllDatabasesByNamespaceV3(c *fiber.Ctx) error {
-	userCtx := c.UserContext()
+func (controller *Controller) HandleGettingAllDatabasesByNamespaceV3(c fiber.Ctx) error {
+	userCtx := c.Context()
 	logger.InfoC(userCtx, MsgReceivedRequest, c.Method(), c.Path())
 
 	namespaceFromPath := c.Params("namespace")
@@ -410,8 +411,8 @@ func (controller *Controller) HandleGettingAllDatabasesByNamespaceV3(c *fiber.Ct
 	return returnDbaasResponse(userCtx, c, resp)
 }
 
-func (controller *Controller) ForwardHandler(c *fiber.Ctx) error {
-	userCtx := c.UserContext()
+func (controller *Controller) ForwardHandler(c fiber.Ctx) error {
+	userCtx := c.Context()
 	logger.InfoC(userCtx, MsgReceivedRequest, c.Method(), c.Path())
 	body := c.Request().Body()
 
@@ -425,8 +426,8 @@ func (controller *Controller) ForwardHandler(c *fiber.Ctx) error {
 	return returnDbaasResponse(userCtx, c, resp)
 }
 
-func (controller *Controller) HandleSimpleGet(ctx *fiber.Ctx) error {
-	userCtx := ctx.UserContext()
+func (controller *Controller) HandleSimpleGet(ctx fiber.Ctx) error {
+	userCtx := ctx.Context()
 	resp, err := controller.forwarder.DoRequest(userCtx, ctx.Method(), ctx.Path(), nil)
 	defer fasthttp.ReleaseResponse(resp)
 	if err != nil {
