@@ -159,7 +159,7 @@ func RunServer() {
 	).Register()
 
 	go BackgroundCleanJob()
-	server.StartServer(app, "http.server.bind")
+	server.StartServer(app, "http.server.bind", fiber.ListenConfig{ListenerNetwork: fiber.NetworkTCP})
 }
 
 func BackgroundCleanJob() {
