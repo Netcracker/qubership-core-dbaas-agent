@@ -7,12 +7,19 @@ import (
 )
 
 // FakeSender is a client.TokenSender for tests: it sends with a fixed token, or fails with Err.
-type FakeSender struct{ Err error }
+// Times is the number of sends (default 1); more than one simulates the resend after a 401.
+type FakeSender struct {
+	Err   error
+	Times int
+}
 
 func (f FakeSender) Send(ctx context.Context, targetUrl string, send rest.SendFunc) error {
 	if f.Err != nil {
 		return f.Err
 	}
-	_, err := send("token")
+	var err error
+	for i := 0; i < max(f.Times, 1); i++ {
+		_, err = send("token")
+	}
 	return err
 }

@@ -72,6 +72,15 @@ func (suite *RestClientTestSuite) TestDoRequest_GetResponse() {
 	suite.Equal(serialize(CompositeStructure{Baseline: "ns-1"}), string(resBody))
 }
 
+func (suite *RestClientTestSuite) TestDoRequest_Resend() {
+	restClient := getMockRestClient("body", http.StatusOK, nil)
+	restClient.Sender = testutils.FakeSender{Times: 2}
+	resBody, code, err := restClient.DoRequest(context.Background(), http.MethodGet, "/cp", nil, logger)
+	suite.Nil(err)
+	suite.Equal(http.StatusOK, code)
+	suite.Equal("body", string(resBody))
+}
+
 func serialize(obj interface{}) string {
 	bytes, err := json.Marshal(obj)
 	if err != nil {
