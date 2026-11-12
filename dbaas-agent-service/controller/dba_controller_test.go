@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"github.com/netcracker/qubership-core-lib-go/v3/security/rest"
 	"io"
 	"net/http"
 	"os"
@@ -1276,7 +1275,7 @@ func (suite *TestSuite) TestController_PostComposite() {
 
 func GetMockRestClient(respBody string, httpCode int, err error) *client.RestClient {
 	restClient := client.NewRestClient("")
-	restClient.Sender = fakeSender{}
+	restClient.Sender = testutils.FakeSender{}
 	restClient.Do = func(request *fasthttp.Request, response *fasthttp.Response) error {
 		response.SetBodyString(respBody)
 		response.SetStatusCode(httpCode)
@@ -1291,14 +1290,4 @@ func serialize(obj interface{}) string {
 		panic(err)
 	}
 	return string(bytes)
-}
-
-type fakeSender struct{ err error }
-
-func (f fakeSender) Send(ctx context.Context, targetUrl string, send rest.SendFunc) error {
-	if f.err != nil {
-		return f.err
-	}
-	_, err := send("token")
-	return err
 }
