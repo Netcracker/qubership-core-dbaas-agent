@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"github.com/netcracker/qubership-core-lib-go/v3/security/rest"
 	"net/http"
 	"testing"
 
@@ -273,13 +274,21 @@ func serialize(obj interface{}) string {
 
 func (suite *SecServiceTestSuite) getMockRestClient(respBody string, httpCode int) *client.RestClient {
 	restClient := client.NewRestClient("")
-	restClient.GetToken = func(ctx context.Context) (string, error) {
-		return "", nil
-	}
+	restClient.Sender = fakeSender{}
 	restClient.Do = func(request *fasthttp.Request, response *fasthttp.Response) error {
 		response.SetBodyString(respBody)
 		response.SetStatusCode(httpCode)
 		return nil
 	}
 	return restClient
+}
+
+type fakeSender struct{ err error }
+
+func (f fakeSender) Send(ctx context.Context, targetUrl string, send rest.SendFunc) error {
+	if f.err != nil {
+		return f.err
+	}
+	_, err := send("token")
+	return err
 }

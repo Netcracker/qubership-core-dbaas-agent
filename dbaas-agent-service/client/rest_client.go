@@ -2,6 +2,7 @@ package client
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -9,14 +10,17 @@ import (
 	constants "github.com/netcracker/qubership-core-lib-go/v3/const"
 	"github.com/netcracker/qubership-core-lib-go/v3/context-propagation/ctxhelper"
 	"github.com/netcracker/qubership-core-lib-go/v3/logging"
-	"github.com/netcracker/qubership-core-lib-go/v3/security"
-	"github.com/netcracker/qubership-core-lib-go/v3/serviceloader"
+	"github.com/netcracker/qubership-core-lib-go/v3/security/rest"
 	"github.com/netcracker/qubership-core-lib-go/v3/utils"
 	"github.com/valyala/fasthttp"
 )
 
+type TokenSender interface {
+	Send(ctx context.Context, targetUrl string, send rest.SendFunc) error
+}
+
 type RestClient struct {
-	GetToken   func(ctx context.Context) (string, error)
+	Sender     TokenSender
 	Do         func(*fasthttp.Request, *fasthttp.Response) error
 	client     *fasthttp.Client
 	gatewayUrl string
@@ -30,9 +34,8 @@ func NewRestClient(gatewayUrl string) *RestClient {
 		TLSConfig:                     utils.GetTlsConfig(),
 		DialDualStack:                 true,
 	}
-	tokenProvider := serviceloader.MustLoad[security.TokenProvider]()
 	return &RestClient{
-		GetToken:   tokenProvider.GetToken,
+		Sender:     rest.NewM2MRequestSender(),
 		Do:         httpclient.Do,
 		client:     httpclient,
 		gatewayUrl: gatewayUrl,
@@ -40,34 +43,52 @@ func NewRestClient(gatewayUrl string) *RestClient {
 }
 
 func (rc *RestClient) DoRequest(ctx context.Context, method string, url string, data []byte, log logging.Logger) ([]byte, int, error) {
-	req, err := rc.constructRequest(ctx, method, url, data, logger)
-	defer fasthttp.ReleaseRequest(req)
+	fullUrl := rc.fullUrl(url)
+	var response *fasthttp.Response
+	defer func() {
+		if response != nil {
+			fasthttp.ReleaseResponse(response)
+		}
+	}()
+	err := rc.Sender.Send(ctx, fullUrl, func(token string) (int, error) {
+		// Send may call this function twice (resend after 401); keep only the last response.
+		if response != nil {
+			fasthttp.ReleaseResponse(response)
+			response = nil
+		}
+		req, err := rc.constructRequest(ctx, method, fullUrl, token, data, log)
+		defer fasthttp.ReleaseRequest(req)
+		if err != nil {
+			log.ErrorC(ctx, "Fail building request object: %+v. URL: %s, method: %s", err, fullUrl, method)
+			return 0, err
+		}
+		response = fasthttp.AcquireResponse()
+		if err := rc.Do(req, response); err != nil {
+			log.WarnC(ctx, "Secured %s request to %s failed with error: %s", method, fullUrl, err)
+			return 0, err
+		}
+		return response.StatusCode(), nil
+	})
 	if err != nil {
-		log.ErrorC(ctx, "Fail building request object: %+v. URL: %s, method: %s", err, url, method)
 		return nil, 0, err
 	}
-	response := fasthttp.AcquireResponse()
-	defer fasthttp.ReleaseResponse(response)
-	err = rc.Do(req, response)
-	if err != nil {
-		log.WarnC(ctx, "Secured %s request to %s failed with error: %s, retrying", method, url, err)
-		return nil, 0, err
+	if response == nil {
+		return nil, 0, errors.New("no response received")
 	}
-	return response.Body(), response.StatusCode(), nil
+	respBody := append([]byte(nil), response.Body()...)
+	return respBody, response.StatusCode(), nil
 }
 
-func (rc *RestClient) constructRequest(ctx context.Context, method string, url string, data []byte, logger logging.Logger) (*fasthttp.Request, error) {
-	req := fasthttp.AcquireRequest()
+func (rc *RestClient) fullUrl(url string) string {
 	var delimiter = ""
 	if url[0:1] != "/" {
 		delimiter = "/"
 	}
-	url = rc.gatewayUrl + delimiter + url
-	m2mToken, err := rc.GetToken(ctx)
-	if err != nil {
-		logger.ErrorC(ctx, "Can't get M2M token %v", err)
-		return req, err
-	}
+	return rc.gatewayUrl + delimiter + url
+}
+
+func (rc *RestClient) constructRequest(ctx context.Context, method string, url string, m2mToken string, data []byte, logger logging.Logger) (*fasthttp.Request, error) {
+	req := fasthttp.AcquireRequest()
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", m2mToken))
 	req.Header.Add("Content-Type", "application/json")
 

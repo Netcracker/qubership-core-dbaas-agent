@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"github.com/netcracker/qubership-core-lib-go/v3/security/rest"
 	"net/http"
 	"testing"
 
@@ -30,42 +31,34 @@ func (suite *RestClientTestSuite) TestGetInternalGatewayUrl_GetDefaultGatewayUrl
 
 func (suite *RestClientTestSuite) TestDoRequest_ErrorOnGettingToken() {
 	restClient := NewRestClient("")
-	restClient.GetToken = func(ctx context.Context) (string, error) {
-		return "", errors.New("can't get token")
-	}
+	restClient.Sender = fakeSender{err: errors.New("can't get token")}
 	_, _, err := restClient.DoRequest(context.Background(), http.MethodGet, "/cp", nil, logger)
 	suite.ErrorContains(err, "can't get token")
 }
 
 func (suite *RestClientTestSuite) TestDoRequest_ErrorOnSending() {
 	restClient := NewRestClient("")
-	restClient.GetToken = func(ctx context.Context) (string, error) {
-		return "token", nil
-	}
+	restClient.Sender = fakeSender{}
 	_, _, err := restClient.DoRequest(context.Background(), http.MethodGet, "/cp", nil, logger)
 	suite.ErrorContains(err, "missing port in address")
 }
 
 func (suite *RestClientTestSuite) TestConstructRequest_AddSlash() {
 	restClient := NewRestClient("")
-	restClient.GetToken = func(ctx context.Context) (string, error) {
-		return "", nil
-	}
-	request, err := restClient.constructRequest(context.Background(), http.MethodGet, "/cp", nil, logger)
+	restClient.Sender = fakeSender{}
+	request, err := restClient.constructRequest(context.Background(), http.MethodGet, restClient.fullUrl("/cp"), "token", nil, logger)
 	suite.Nil(err)
 	suite.Equal("/cp", string(request.RequestURI()))
 
-	request, err = restClient.constructRequest(context.Background(), http.MethodGet, "cp", nil, logger)
+	request, err = restClient.constructRequest(context.Background(), http.MethodGet, restClient.fullUrl("cp"), "token", nil, logger)
 	suite.Nil(err)
 	suite.Equal("/cp", string(request.RequestURI()))
 }
 
 func (suite *RestClientTestSuite) TestConstructRequest_WithBody() {
 	restClient := NewRestClient("")
-	restClient.GetToken = func(ctx context.Context) (string, error) {
-		return "", nil
-	}
-	request, err := restClient.constructRequest(context.Background(), http.MethodGet, "/cp", []byte("somebody"), logger)
+	restClient.Sender = fakeSender{}
+	request, err := restClient.constructRequest(context.Background(), http.MethodGet, restClient.fullUrl("/cp"), "token", []byte("somebody"), logger)
 	suite.Nil(err)
 	suite.Equal("somebody", string(request.Body()))
 }
@@ -89,13 +82,21 @@ func serialize(obj interface{}) string {
 
 func getMockRestClient(respBody string, httpCode int, err error) *RestClient {
 	restClient := NewRestClient("")
-	restClient.GetToken = func(ctx context.Context) (string, error) {
-		return "", nil
-	}
+	restClient.Sender = fakeSender{}
 	restClient.Do = func(request *fasthttp.Request, response *fasthttp.Response) error {
 		response.SetBodyString(respBody)
 		response.SetStatusCode(httpCode)
 		return err
 	}
 	return restClient
+}
+
+type fakeSender struct{ err error }
+
+func (f fakeSender) Send(ctx context.Context, targetUrl string, send rest.SendFunc) error {
+	if f.err != nil {
+		return f.err
+	}
+	_, err := send("token")
+	return err
 }
