@@ -15,12 +15,12 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
-type TokenSender interface {
+type RequestSender interface {
 	Send(ctx context.Context, targetUrl string, send rest.SendFunc) error
 }
 
 type RestClient struct {
-	Sender     TokenSender
+	Sender     RequestSender
 	Do         func(*fasthttp.Request, *fasthttp.Response) error
 	client     *fasthttp.Client
 	gatewayUrl string
