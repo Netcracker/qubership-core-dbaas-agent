@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"github.com/netcracker/qubership-core-dbaas-agent/dbaas-agent-service/v2/testutils"
 	"net/http"
 	"testing"
 
@@ -273,9 +274,7 @@ func serialize(obj interface{}) string {
 
 func (suite *SecServiceTestSuite) getMockRestClient(respBody string, httpCode int) *client.RestClient {
 	restClient := client.NewRestClient("")
-	restClient.GetToken = func(ctx context.Context) (string, error) {
-		return "", nil
-	}
+	restClient.Sender = testutils.FakeSender{}
 	restClient.Do = func(request *fasthttp.Request, response *fasthttp.Response) error {
 		response.SetBodyString(respBody)
 		response.SetStatusCode(httpCode)
