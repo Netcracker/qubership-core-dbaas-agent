@@ -1,4 +1,4 @@
-﻿package controller
+package controller
 
 import (
 	"bytes"
@@ -1275,9 +1275,7 @@ func (suite *TestSuite) TestController_PostComposite() {
 
 func GetMockRestClient(respBody string, httpCode int, err error) *client.RestClient {
 	restClient := client.NewRestClient("")
-	restClient.GetToken = func(ctx context.Context) (string, error) {
-		return "", nil
-	}
+	restClient.Sender = testutils.FakeSender{}
 	restClient.Do = func(request *fasthttp.Request, response *fasthttp.Response) error {
 		response.SetBodyString(respBody)
 		response.SetStatusCode(httpCode)
