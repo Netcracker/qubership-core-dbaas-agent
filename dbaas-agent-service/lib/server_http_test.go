@@ -17,7 +17,7 @@ import (
 	"github.com/netcracker/qubership-core-dbaas-agent/dbaas-agent-service/v2/controller"
 	"github.com/netcracker/qubership-core-dbaas-agent/dbaas-agent-service/v2/service"
 	"github.com/netcracker/qubership-core-lib-go-actuator-common/v2/apiversion"
-	"github.com/netcracker/qubership-core-lib-go-fiber-server-utils/v2/security"
+	"github.com/netcracker/qubership-core-lib-go-fiber-server-utils/v3/security"
 	"github.com/netcracker/qubership-core-lib-go/v3/configloader"
 	"github.com/netcracker/qubership-core-lib-go/v3/serviceloader"
 	"github.com/stretchr/testify/assert"
