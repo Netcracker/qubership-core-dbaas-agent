@@ -1,2 +1,3 @@
 microservice:
   name: dbaas-agent
+  namespace: test-namespace
