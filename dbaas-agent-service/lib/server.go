@@ -109,24 +109,6 @@ func RunServer() {
 		defer podSecretsWatcher.Stop()
 	}
 	initConfiguration()
-	app, err := newApp()
-	if err != nil {
-		logger.Error("Error while create app because: %s", err.Error())
-		return
-	}
-	routeregistration.NewRegistrar().WithRoutes(
-		routeregistration.Route{
-			From:      "/api/v1/dbaas/records/databases/db-owner-roles",
-			To:        "/api/v1/dbaas/records/databases/db-owner-roles",
-			RouteType: routeregistration.Private,
-		},
-	).Register()
-
-	go BackgroundCleanJob()
-	listen(app)
-}
-
-func newApp() (*fiber.App, error) {
 	app, err := fiberserver.New(fiber.Config{IdleTimeout: 30 * time.Second}).
 		WithPprof("6060").
 		WithPrometheus("/prometheus").
@@ -136,7 +118,8 @@ func newApp() (*fiber.App, error) {
 		WithLogLevelsInfo().
 		Process()
 	if err != nil {
-		return nil, err
+		logger.Error("Error while create app because: %s", err.Error())
+		return
 	}
 
 	apiV3Dbaas := app.Group("/api/v3/dbaas")
@@ -167,10 +150,15 @@ func newApp() (*fiber.App, error) {
 		ctx.Set("Content-Type", "application/json")
 		return ctx.Status(http.StatusOK).SendString(docs.SwaggerInfo.ReadDoc())
 	})
-	return app, nil
-}
+	routeregistration.NewRegistrar().WithRoutes(
+		routeregistration.Route{
+			From:      "/api/v1/dbaas/records/databases/db-owner-roles",
+			To:        "/api/v1/dbaas/records/databases/db-owner-roles",
+			RouteType: routeregistration.Private,
+		},
+	).Register()
 
-func listen(app *fiber.App) {
+	go BackgroundCleanJob()
 	server.StartServer(app, "http.server.bind", fiber.ListenConfig{ListenerNetwork: fiber.NetworkTCP})
 }
 
