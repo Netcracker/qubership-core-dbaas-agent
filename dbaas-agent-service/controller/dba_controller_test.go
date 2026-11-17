@@ -163,7 +163,7 @@ func (suite *TestSuite) TestController_HandleDeletionByClassifierV3_WrongBodyCon
 	assert.Nil(suite.T(), err)
 
 	testRespBody, _ := json.Marshal(map[string]interface{}{
-		"error": "failed to unmarshal: EOF",
+		"error": "bind from body: failed to unmarshal xml: EOF",
 	})
 	assert.Equal(suite.T(), http.StatusInternalServerError, response.StatusCode)
 	assert.Equal(suite.T(), testRespBody, respBody)

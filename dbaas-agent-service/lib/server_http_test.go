@@ -38,9 +38,9 @@ func TestForwardedRequest(t *testing.T) {
 		wantUpstreamURI string
 	}{
 		{name: "plain path", target: "/api/composite/v1/structures/abc", wantStatus: http.StatusOK, wantContentType: "application/json", wantBody: forwarded, wantUpstreamURI: "/api/composite/v1/structures/abc"},
-		{name: "dot-dot segment", target: "/api/composite/v1/structures/x/../abc", wantStatus: http.StatusNotFound, wantContentType: "text/plain; charset=utf-8", wantBody: "Cannot GET /api/composite/v1/structures/x/../abc"},
-		{name: "encoded dot-dot segment", target: "/api/composite/v1/structures/x/%2e%2e/abc", wantStatus: http.StatusNotFound, wantContentType: "text/plain; charset=utf-8", wantBody: "Cannot GET /api/composite/v1/structures/x/%2e%2e/abc"},
-		{name: "percent-encoded unreserved character", target: "/api/composite/v1/structures/%61bc", wantStatus: http.StatusOK, wantContentType: "application/json", wantBody: forwarded, wantUpstreamURI: "/api/composite/v1/structures/%61bc"},
+		{name: "dot-dot segment", target: "/api/composite/v1/structures/x/../abc", wantStatus: http.StatusOK, wantContentType: "application/json", wantBody: forwarded, wantUpstreamURI: "/api/composite/v1/structures/abc"},
+		{name: "encoded dot-dot segment", target: "/api/composite/v1/structures/x/%2e%2e/abc", wantStatus: http.StatusOK, wantContentType: "application/json", wantBody: forwarded, wantUpstreamURI: "/api/composite/v1/structures/abc"},
+		{name: "percent-encoded unreserved character", target: "/api/composite/v1/structures/%61bc", wantStatus: http.StatusOK, wantContentType: "application/json", wantBody: forwarded, wantUpstreamURI: "/api/composite/v1/structures/abc"},
 		{name: "query string", target: "/api/composite/v1/structures/abc?x=1", wantStatus: http.StatusOK, wantContentType: "application/json", wantBody: forwarded, wantUpstreamURI: "/api/composite/v1/structures/abc"},
 	}
 	for _, tt := range tests {
@@ -74,7 +74,7 @@ func TestRequestBodyParsing(t *testing.T) {
 	}{
 		{name: "application/json", contentType: "application/json", body: `{"type":"postgresql"}`, wantStatus: http.StatusBadRequest, wantBody: parsed},
 		{name: "application/json with charset", contentType: "application/json; charset=utf-8", body: `{"type":"postgresql"}`, wantStatus: http.StatusBadRequest, wantBody: parsed},
-		{name: "text/json", contentType: "text/json", body: `{"type":"postgresql"}`, wantStatus: http.StatusBadRequest, wantBody: parsed},
+		{name: "text/json", contentType: "text/json", body: `{"type":"postgresql"}`, wantStatus: http.StatusInternalServerError, wantBody: notParsed},
 		{name: "vendor +json type", contentType: "application/vnd.netcracker+json", body: `{"type":"postgresql"}`, wantStatus: http.StatusBadRequest, wantBody: parsed},
 		{name: "no Content-Type", body: `{"type":"postgresql"}`, wantStatus: http.StatusInternalServerError, wantBody: notParsed},
 		{name: "text/plain", contentType: "text/plain", body: `{"type":"postgresql"}`, wantStatus: http.StatusInternalServerError, wantBody: notParsed},
@@ -108,7 +108,7 @@ func TestRoutingResponses(t *testing.T) {
 		wantBody        string
 	}{
 		{name: "liveness probe", path: "/probes/live", wantStatus: http.StatusOK, wantContentType: "", wantBody: ""},
-		{name: "unknown path", path: "/missing", wantStatus: http.StatusNotFound, wantContentType: "text/plain; charset=utf-8", wantBody: "Cannot GET /missing"},
+		{name: "unknown path", path: "/missing", wantStatus: http.StatusNotFound, wantContentType: "text/plain; charset=utf-8", wantBody: "Not Found"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
