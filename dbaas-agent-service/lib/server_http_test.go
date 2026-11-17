@@ -28,34 +28,42 @@ const testNamespace = "test-namespace"
 
 func TestForwardedRequest(t *testing.T) {
 	srv := startServer(t)
+	const forwarded = `{"forwarded":true}`
 	tests := []struct {
 		name            string
 		target          string
+		wantStatus      int
+		wantContentType string
+		wantBody        string
 		wantUpstreamURI string
 	}{
-		{name: "plain path", target: "/api/composite/v1/structures/abc", wantUpstreamURI: "/api/composite/v1/structures/abc"},
-		{name: "dot-dot segment", target: "/api/composite/v1/structures/x/../abc", wantUpstreamURI: "/api/composite/v1/structures/abc"},
-		{name: "encoded dot-dot segment", target: "/api/composite/v1/structures/x/%2e%2e/abc", wantUpstreamURI: "/api/composite/v1/structures/abc"},
-		{name: "percent-encoded unreserved character", target: "/api/composite/v1/structures/%61bc", wantUpstreamURI: "/api/composite/v1/structures/abc"},
-		{name: "query string", target: "/api/composite/v1/structures/abc?x=1", wantUpstreamURI: "/api/composite/v1/structures/abc"},
+		{name: "plain path", target: "/api/composite/v1/structures/abc", wantStatus: http.StatusOK, wantContentType: "application/json", wantBody: forwarded, wantUpstreamURI: "/api/composite/v1/structures/abc"},
+		{name: "dot-dot segment", target: "/api/composite/v1/structures/x/../abc", wantStatus: http.StatusNotFound, wantContentType: "text/plain; charset=utf-8", wantBody: "Cannot GET /api/composite/v1/structures/x/../abc"},
+		{name: "encoded dot-dot segment", target: "/api/composite/v1/structures/x/%2e%2e/abc", wantStatus: http.StatusNotFound, wantContentType: "text/plain; charset=utf-8", wantBody: "Cannot GET /api/composite/v1/structures/x/%2e%2e/abc"},
+		{name: "percent-encoded unreserved character", target: "/api/composite/v1/structures/%61bc", wantStatus: http.StatusOK, wantContentType: "application/json", wantBody: forwarded, wantUpstreamURI: "/api/composite/v1/structures/%61bc"},
+		{name: "query string", target: "/api/composite/v1/structures/abc?x=1", wantStatus: http.StatusOK, wantContentType: "application/json", wantBody: forwarded, wantUpstreamURI: "/api/composite/v1/structures/abc"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			srv.upstream.reset()
+
 			resp := sendRaw(t, srv.port, "GET "+tt.target+" HTTP/1.1\r\nHost: localhost\r\nX-Request-Id: req-1\r\nConnection: close\r\n\r\n")
 
 			upstream := srv.upstream.last()
-			assert.Equal(t, http.StatusOK, resp.status, "status, body %q", resp.body)
-			assert.Equal(t, "application/json", resp.contentType, "Content-Type")
-			assert.Equal(t, `{"forwarded":true}`, resp.body, "body")
-			assert.Equal(t, tt.wantUpstreamURI, upstream.requestURI, "request URI the upstream received")
-			assert.Equal(t, "req-1", upstream.requestID, "X-Request-Id the upstream received")
+			assert.Equal(t, tt.wantStatus, resp.status, "status")
+			assert.Equal(t, tt.wantContentType, resp.contentType, "Content-Type")
+			assert.Equal(t, tt.wantBody, resp.body, "body")
+			assert.Equal(t, tt.wantUpstreamURI, upstream.requestURI, "request URI the upstream received, empty when not forwarded")
+			if tt.wantUpstreamURI != "" {
+				assert.Equal(t, "req-1", upstream.requestID, "X-Request-Id the upstream received")
+			}
 		})
 	}
 }
 
 func TestRequestBodyParsing(t *testing.T) {
 	srv := startServer(t)
-	const parsed = `{"error":"Got error during work with tenant context"}`
+	const parsed = `{"error":"request must contain a classifier"}`
 	const notParsed = `{"error":"Failed to read request body in create database handler"}`
 	tests := []struct {
 		name        string
@@ -64,10 +72,10 @@ func TestRequestBodyParsing(t *testing.T) {
 		wantStatus  int
 		wantBody    string
 	}{
-		{name: "application/json", contentType: "application/json", body: `{"type":"postgresql"}`, wantStatus: http.StatusForbidden, wantBody: parsed},
-		{name: "application/json with charset", contentType: "application/json; charset=utf-8", body: `{"type":"postgresql"}`, wantStatus: http.StatusForbidden, wantBody: parsed},
-		{name: "text/json", contentType: "text/json", body: `{"type":"postgresql"}`, wantStatus: http.StatusForbidden, wantBody: parsed},
-		{name: "vendor +json type", contentType: "application/vnd.netcracker+json", body: `{"type":"postgresql"}`, wantStatus: http.StatusForbidden, wantBody: parsed},
+		{name: "application/json", contentType: "application/json", body: `{"type":"postgresql"}`, wantStatus: http.StatusBadRequest, wantBody: parsed},
+		{name: "application/json with charset", contentType: "application/json; charset=utf-8", body: `{"type":"postgresql"}`, wantStatus: http.StatusBadRequest, wantBody: parsed},
+		{name: "text/json", contentType: "text/json", body: `{"type":"postgresql"}`, wantStatus: http.StatusBadRequest, wantBody: parsed},
+		{name: "vendor +json type", contentType: "application/vnd.netcracker+json", body: `{"type":"postgresql"}`, wantStatus: http.StatusBadRequest, wantBody: parsed},
 		{name: "no Content-Type", body: `{"type":"postgresql"}`, wantStatus: http.StatusInternalServerError, wantBody: notParsed},
 		{name: "text/plain", contentType: "text/plain", body: `{"type":"postgresql"}`, wantStatus: http.StatusInternalServerError, wantBody: notParsed},
 		{name: "malformed JSON", contentType: "application/json", body: `{"type":`, wantStatus: http.StatusInternalServerError, wantBody: notParsed},
@@ -99,7 +107,7 @@ func TestRoutingResponses(t *testing.T) {
 		wantContentType string
 		wantBody        string
 	}{
-		{name: "liveness probe", path: "/probes/live", wantStatus: http.StatusOK, wantContentType: "text/plain; charset=utf-8", wantBody: ""},
+		{name: "liveness probe", path: "/probes/live", wantStatus: http.StatusOK, wantContentType: "", wantBody: ""},
 		{name: "unknown path", path: "/missing", wantStatus: http.StatusNotFound, wantContentType: "text/plain; charset=utf-8", wantBody: "Cannot GET /missing"},
 	}
 	for _, tt := range tests {
@@ -215,6 +223,12 @@ func (u *recordingUpstream) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	u.mu.Unlock()
 	w.Header().Set("Content-Type", "application/json")
 	_, _ = io.WriteString(w, `{"forwarded":true}`)
+}
+
+func (u *recordingUpstream) reset() {
+	u.mu.Lock()
+	defer u.mu.Unlock()
+	u.request = upstreamRequest{}
 }
 
 func (u *recordingUpstream) last() upstreamRequest {
