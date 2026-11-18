@@ -56,67 +56,104 @@ spec:
         spec:
             serviceAccountName: '{{ .Values.SERVICE_NAME }}'
             volumes:
-            -   name: projected-tokens
-                projected:
-                    defaultMode: 292
-                    sources:
-                    -   serviceAccountToken:
-                          path: netcracker/token
-                          audience: netcracker
-                          expirationSeconds: 600
-                    -   serviceAccountToken:
-                          path: dbaas/token
-                          audience: dbaas
-                          expirationSeconds: 600
-                    -   serviceAccountToken:
-                          path: maas/token
-                          audience: maas
-                          expirationSeconds: 600
-            -   name: topology
-                configMap:
-                    name: topology
-{{ if and .Values.READONLY_CONTAINER_FILE_SYSTEM_ENABLED (eq .Values.PAAS_PLATFORM "KUBERNETES") }}
+            -   name: client-credentials
+                secret:
+                    secretName: '{{ .Values.SERVICE_NAME }}-client-credentials'
+{{ if .Values.INTERNAL_TLS_ENABLED }}
+            -   name: tls
+                secret:
+                    secretName: '{{ .Values.SERVICE_NAME }}-tls'
+{{ end }}
+{{ if .Values.READONLY_CONTAINER_FILE_SYSTEM_ENABLED }}
+            -   name: tmp
+                emptyDir: {}
             -   name: sslcerts
                 emptyDir: {}
             -   name: cacerts
                 emptyDir: {}
 {{ end }}
+            -   name: '{{ .Values.SSL_SECRET }}'
+                secret:
+                    secretName: '{{ .Values.SSL_SECRET }}'
+            -   name: projected-tokens
+                projected:
+                    defaultMode: 292
+                    sources:
+                    -   serviceAccountToken:
+                            path: netcracker/token
+                            audience: netcracker
+                            expirationSeconds: 600
+                    -   serviceAccountToken:
+                            path: dbaas/token
+                            audience: dbaas
+                            expirationSeconds: 600
+                    -   serviceAccountToken:
+                            path: maas/token
+                            audience: maas
+                            expirationSeconds: 600
+            -   name: topology
+                configMap:
+                    name: topology
             -   name: pod-secrets
                 projected:
+                    defaultMode: 288
                     sources:
                     -   secret:
-                            name: '{{ .Values.DBAAS_CREDENTIALS_SECRET }}'
+                            name: 'cluster-dba-credentials-secret'
                             items:
                             -   key: username
-                                path: DBAAS_CLUSTER_DBA_CREDENTIALS_USERNAME
+                                path: dbaas_cluster_dba_credentials_username
                             -   key: password
-                                path: DBAAS_CLUSTER_DBA_CREDENTIALS_PASSWORD
+                                path: dbaas_cluster_dba_credentials_password
             containers:
             -   name: '{{ .Values.SERVICE_NAME }}'
                 image: '{{ .Values.IMAGE_REPOSITORY }}:{{ .Values.TAG }}'
                 volumeMounts:
+                -   name: client-credentials
+                    mountPath: /etc/secret
+                    readOnly: true
+{{ if .Values.INTERNAL_TLS_ENABLED }}
+                -   name: tls
+                    mountPath: '/etc/tls'
+                    readOnly: true
+{{ end }}
+{{ if .Values.READONLY_CONTAINER_FILE_SYSTEM_ENABLED }}
+                -   name: tmp
+                    mountPath: /tmp
+                -   name: sslcerts
+                    mountPath: /etc/ssl/certs
+                -   name: cacerts
+                    mountPath: /usr/local/share/ca-certificates
+{{ end }}
+                -   name: '{{ .Values.SSL_SECRET }}'
+                    mountPath: /tmp/cert/{{ .Values.SSL_SECRET }}
+                    readOnly: true
                 -   name: projected-tokens
                     mountPath: /var/run/secrets/tokens
                     readOnly: true
                 -   name: topology
                     mountPath: /etc/topology
                     readOnly: true
-{{ if and .Values.READONLY_CONTAINER_FILE_SYSTEM_ENABLED (eq .Values.PAAS_PLATFORM "KUBERNETES") }}
-                -   name: sslcerts
-                    mountPath: /etc/ssl/certs
-                -   name: cacerts
-                    mountPath: /usr/local/share/ca-certificates
-{{ end }}
                 -   name: pod-secrets
                     mountPath: /etc/secrets/pod-secrets
                     readOnly: true
                 args:
                 - '/app/dbaas-agent'
                 env:
+                - name: M2M_AUTH_MODE
+                  value: '{{ .Values.M2M_AUTH_MODE }}'
                 -   name: DBAAS_AGENT_NAMESPACE_ISOLATION_ENABLED
                     value: '{{ .Values.DBAAS_AGENT_NAMESPACE_ISOLATION_ENABLED }}'
                 -   name: LOG_LEVEL
                     value: '{{lower .Values.LOG_LEVEL}}'
+                -   name: CERTIFICATE_BUNDLE_{{ .Values.SSL_SECRET }}_MD5SUM
+                    value: '{{ .Values.CERTIFICATE_BUNDLE_MD5SUM }}'
+                -   name: INTERNAL_TLS_ENABLED
+                    value: '{{ .Values.INTERNAL_TLS_ENABLED }}'
+{{ if .Values.INTERNAL_TLS_ENABLED }}
+                -   name: CERTIFICATE_FILE_PATH
+                    value: '/etc/tls'
+{{ end }}
                 -   name: API_DBAAS_ADDRESS
                     value: '{{ .Values.API_DBAAS_ADDRESS }}'
                 -   name: CONSUL_ENABLED
@@ -125,14 +162,6 @@ spec:
                 -   name: CONSUL_URL
                     value: '{{ .Values.CONSUL_URL }}'
                     {{ end }}
-                -   name: CONSUL_AUTH_MODE
-                    value: '{{ .Values.CONSUL_AUTH_MODE }}'
-                -   name: CONSUL_AUTH_METHOD
-                    value: '{{ .Values.CONSUL_AUTH_METHOD }}'
-                -   name: CONSUL_AUTH_AUDIENCE
-                    value: '{{ .Values.CONSUL_AUTH_AUDIENCE }}'
-                -   name: CONSUL_AUTH_FALLBACK_RECHECK_INTERVAL
-                    value: '{{ .Values.CONSUL_AUTH_FALLBACK_RECHECK_INTERVAL }}'
                 -   name: DBAAS_DEFAULT_SEC_POLICY
                     value: '{{ .Values.DBAAS_DEFAULT_SEC_POLICY }}'
                 -   name: TRACING_ENABLED
@@ -154,8 +183,6 @@ spec:
                     value: '{{ .Values.DISABLE_DEPRECATED_API }}'
                 -   name: SERVICE_MESH_TYPE
                     value: '{{ .Values.SERVICE_MESH_TYPE }}'
-                -   name: M2M_AUTH_MODE
-                    value: '{{ .Values.M2M_AUTH_MODE }}'
                 ports:
                 -   name: web
                     containerPort: 8080
@@ -166,30 +193,45 @@ spec:
                 resources:
                     requests:
                         cpu: '{{ .Values.CPU_REQUEST }}'
-                        memory: '{{ .Values.MEMORY_LIMIT }}'
+                        memory: '{{ .Values.MEMORY_REQUEST }}'
                     limits:
                         memory: '{{ .Values.MEMORY_LIMIT }}'
                         cpu: '{{ .Values.CPU_LIMIT }}'
                 livenessProbe:
                     httpGet:
                         path: /probes/live
-                        port: web
-                        scheme: HTTP
-                    initialDelaySeconds: 180
-                    timeoutSeconds: 15
+                        port: {{ if .Values.INTERNAL_TLS_ENABLED }} tls {{ else }} web {{ end }}
+                        scheme: {{ if .Values.INTERNAL_TLS_ENABLED }} HTTPS {{ else }} HTTP {{ end }}
+                    initialDelaySeconds: {{ ternary 60 .Values.PROBE_LIVENESS_INITIAL_DELAY_SECONDS (lt (int .Values.PROBE_LIVENESS_INITIAL_DELAY_SECONDS) 0) }}
+                    timeoutSeconds: {{ ternary 5 .Values.PROBE_LIVENESS_TIMEOUT_SECONDS (lt (int .Values.PROBE_LIVENESS_TIMEOUT_SECONDS) 0) }}
+                    periodSeconds: {{ ternary 10 .Values.PROBE_LIVENESS_PERIOD_SECONDS (lt (int .Values.PROBE_LIVENESS_PERIOD_SECONDS) 0) }}
+                    failureThreshold: {{ ternary 3 .Values.PROBE_LIVENESS_FAILURE_THRESHOLD (lt (int .Values.PROBE_LIVENESS_FAILURE_THRESHOLD) 0) }}
                 readinessProbe:
                     httpGet:
                         path: /probes/ready
-                        port: web
-                        scheme: HTTP
-                    initialDelaySeconds: 5
-                    timeoutSeconds: 3
+                        port: {{ if .Values.INTERNAL_TLS_ENABLED }} tls {{ else }} web {{ end }}
+                        scheme: {{ if .Values.INTERNAL_TLS_ENABLED }} HTTPS {{ else }} HTTP {{ end }}
+                    initialDelaySeconds: {{ ternary 5 .Values.PROBE_READINESS_INITIAL_DELAY_SECONDS (lt (int .Values.PROBE_READINESS_INITIAL_DELAY_SECONDS) 0) }}
+                    timeoutSeconds: {{ ternary 3 .Values.PROBE_READINESS_TIMEOUT_SECONDS (lt (int .Values.PROBE_READINESS_TIMEOUT_SECONDS) 0) }}
+                    periodSeconds: {{ ternary 10 .Values.PROBE_READINESS_PERIOD_SECONDS (lt (int .Values.PROBE_READINESS_PERIOD_SECONDS) 0) }}
+                    successThreshold: {{ ternary 1 .Values.PROBE_READINESS_SUCCESS_THRESHOLD (lt (int .Values.PROBE_READINESS_SUCCESS_THRESHOLD) 0) }}
+                    failureThreshold: {{ ternary 3 .Values.PROBE_READINESS_FAILURE_THRESHOLD (lt (int .Values.PROBE_READINESS_FAILURE_THRESHOLD) 0) }}
+                startupProbe:
+                  httpGet:
+                    path: /probes/live
+                    port: {{ if .Values.INTERNAL_TLS_ENABLED }} tls {{ else }} web {{ end }}
+                    scheme: {{ if .Values.INTERNAL_TLS_ENABLED }} HTTPS {{ else }} HTTP {{ end }}
+                  initialDelaySeconds: {{ ternary 3 .Values.PROBE_STARTUP_INITIAL_DELAY_SECONDS (lt (int .Values.PROBE_STARTUP_INITIAL_DELAY_SECONDS) 0) }}
+                  timeoutSeconds: {{ ternary 3 .Values.PROBE_STARTUP_TIMEOUT_SECONDS (lt (int .Values.PROBE_STARTUP_TIMEOUT_SECONDS) 0) }}
+                  periodSeconds: {{ ternary 3 .Values.PROBE_STARTUP_PERIOD_SECONDS (lt (int .Values.PROBE_STARTUP_PERIOD_SECONDS) 0) }}
+                  failureThreshold: {{ ternary 60 .Values.PROBE_STARTUP_FAILURE_THRESHOLD (lt (int .Values.PROBE_STARTUP_FAILURE_THRESHOLD) 0) }}
+
                 securityContext:
 {{ if eq .Values.PAAS_PLATFORM "KUBERNETES" }}
                     runAsUser: 10001
                     runAsGroup: 10001
 {{ end }}
-                    readOnlyRootFilesystem: {{ and .Values.READONLY_CONTAINER_FILE_SYSTEM_ENABLED (eq .Values.PAAS_PLATFORM "KUBERNETES") }}
+                    readOnlyRootFilesystem: {{ .Values.READONLY_CONTAINER_FILE_SYSTEM_ENABLED }}
                     runAsNonRoot: true
                     seccompProfile:
                         type: RuntimeDefault
@@ -218,3 +260,4 @@ spec:
     selector:
         matchLabels:
             name: '{{ .Values.SERVICE_NAME }}'
+

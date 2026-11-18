@@ -1,0 +1,16 @@
+{{- if .Capabilities.APIVersions.Has "dbaas.netcracker.com/v1" }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: dbaas-operator-secrets
+  labels:
+    app.kubernetes.io/name: '{{ .Values.SERVICE_NAME }}'
+    app.kubernetes.io/part-of: '{{ .Values.APPLICATION_NAME }}'
+    app.kubernetes.io/managed-by: '{{ .Values.MANAGED_BY }}'
+    deployer.cleanup/allow: 'true'
+    deployment.netcracker.com/sessionId: '{{ .Values.DEPLOYMENT_SESSION_ID | default "unimplemented" }}'
+rules:
+  - apiGroups: [ "" ]
+    resources: [ secrets ]
+    verbs: [ get, create, update, patch ]
+{{- end }}
