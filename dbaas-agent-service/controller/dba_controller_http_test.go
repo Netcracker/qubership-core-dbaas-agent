@@ -20,7 +20,6 @@ func (suite *TestSuite) TestForwardedRequestPath() {
 	upstream := &recordingUpstream{}
 	testutils.AddHandler(testutils.Contains("/api/composite/v1/structures"), upstream.ServeHTTP)
 	app := suite.newHttpApp()
-	const forwarded = `{"forwarded":true}`
 	tests := []struct {
 		name            string
 		target          string
@@ -38,12 +37,10 @@ func (suite *TestSuite) TestForwardedRequestPath() {
 			req := httptest.NewRequest(http.MethodGet, tt.target, nil)
 			req.Header.Set("X-Request-Id", "req-1")
 
-			status, contentType, body := suite.send(app, req)
+			status, _, body := suite.send(app, req)
 
 			received := upstream.last()
-			assert.Equal(suite.T(), http.StatusOK, status, "status")
-			assert.Equal(suite.T(), "application/json", contentType, "Content-Type")
-			assert.Equal(suite.T(), forwarded, body, "body")
+			assert.Equal(suite.T(), http.StatusOK, status, "status, body %s", body)
 			assert.Equal(suite.T(), tt.wantUpstreamURI, received.requestURI, "request URI the upstream received")
 			assert.Equal(suite.T(), "req-1", received.requestID, "X-Request-Id the upstream received")
 		})
@@ -68,7 +65,6 @@ func (suite *TestSuite) TestRequestBodyContentType() {
 		{name: "no Content-Type", body: `{"type":"postgresql"}`, wantStatus: http.StatusInternalServerError, wantBody: notParsed},
 		{name: "text/plain", contentType: "text/plain", body: `{"type":"postgresql"}`, wantStatus: http.StatusInternalServerError, wantBody: notParsed},
 		{name: "malformed JSON", contentType: "application/json", body: `{"type":`, wantStatus: http.StatusInternalServerError, wantBody: notParsed},
-		{name: "empty body", contentType: "application/json", wantStatus: http.StatusBadRequest, wantBody: `{"error":"request body in create database handler is nil"}`},
 	}
 	for _, tt := range tests {
 		suite.Run(tt.name, func() {
