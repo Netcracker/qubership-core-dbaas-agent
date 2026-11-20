@@ -8,10 +8,10 @@ require (
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/google/uuid v1.6.0
-	github.com/netcracker/qubership-core-lib-go-actuator-common/v2 v2.12.5
-	github.com/netcracker/qubership-core-lib-go-fiber-server-utils/v2 v2.11.5
-	github.com/netcracker/qubership-core-lib-go-rest-utils/v2 v2.11.1
-	github.com/netcracker/qubership-core-lib-go/v3 v3.15.4
+	github.com/netcracker/qubership-core-lib-go-actuator-common/v2 v2.13.0
+	github.com/netcracker/qubership-core-lib-go-fiber-server-utils/v2 v2.12.0
+	github.com/netcracker/qubership-core-lib-go-rest-utils/v2 v2.12.0
+	github.com/netcracker/qubership-core-lib-go/v3 v3.16.0
 	github.com/stretchr/testify v1.12.1
 	github.com/swaggo/swag v1.16.6
 	github.com/urfave/cli/v2 v2.27.7
@@ -35,7 +35,7 @@ require (
 	github.com/go-openapi/jsonreference v0.21.0 // indirect
 	github.com/go-openapi/spec v0.21.0 // indirect
 	github.com/go-openapi/swag v0.23.1 // indirect
-	github.com/go-pkgz/expirable-cache/v3 v3.1.1 // indirect
+	github.com/go-pkgz/expirable-cache/v3 v3.2.0 // indirect
 	github.com/go-viper/mapstructure/v2 v2.5.0 // indirect
 	github.com/gofiber/adaptor/v2 v2.2.1 // indirect
 	github.com/hashicorp/consul/api v1.35.0 // indirect
@@ -64,7 +64,7 @@ require (
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
 	github.com/molecule-man/go-brrr v1.3.1 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
-	github.com/netcracker/qubership-core-lib-go-error-handling/v3 v3.7.6 // indirect
+	github.com/netcracker/qubership-core-lib-go-error-handling/v3 v3.8.0 // indirect
 	github.com/openzipkin/zipkin-go v0.4.3 // indirect
 	github.com/pbnjay/memory v0.0.0-20210728143218-7b4eea64cf58 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
